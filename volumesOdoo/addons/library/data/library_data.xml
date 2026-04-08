@@ -1,0 +1,24 @@
+<odoo>
+  <!-- Datos demo mínimos para la instalación -->
+  <record id="demo_publisher_1" model="library.publisher">
+    <field name="name">Editorial Demo</field>
+    <field name="country">España</field>
+    <field name="website">https://example.com</field>
+  </record>
+
+  <record id="demo_author_1" model="library.author">
+    <field name="name">Autor Demo</field>
+    <field name="nationality">España</field>
+    <field name="date_of_birth">1970-01-01</field>
+  </record>
+
+  <record id="demo_book_1" model="library.book">
+    <field name="name">Libro Demo</field>
+    <field name="isbn">000-0000000000</field>
+    <field name="publication_year">2020</field>
+    <field name="publisher_id" ref="demo_publisher_1"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_1'))]"/>
+    <field name="price_sale">10.0</field>
+    <field name="price_cost">5.0</field>
+  </record>
+</odoo>

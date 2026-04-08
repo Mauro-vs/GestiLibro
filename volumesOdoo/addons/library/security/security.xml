@@ -1,0 +1,14 @@
+<odoo>
+  <!-- Grupos mínimos para asignar permisos desde ir.model.access.csv -->
+  <record id="group_library_user" model="res.groups">
+    <field name="name">Usuario Biblioteca</field>
+  </record>
+
+  <record id="group_library_librarian" model="res.groups">
+    <field name="name">Bibliotecario</field>
+  </record>
+
+  <record id="group_library_manager" model="res.groups">
+    <field name="name">Gestor de la Biblioteca</field>
+  </record>
+</odoo>

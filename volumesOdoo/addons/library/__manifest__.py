@@ -1,0 +1,21 @@
+{
+    'name': 'GestiLibros',
+    'version': '1.0.0',
+    'summary': 'Gestión de librosssss, autores, tiendas y stock',
+    'description': 'Gestiona librosssss, autores, tiendas, stock y pedidos para una librería',
+    'author': 'Mauro',
+    'category': 'Gestilibros',
+    'depends': ['base'],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'views/library_book_views.xml',
+        'views/library_author_views.xml',
+        'views/library_publisher_views.xml',
+        'views/library_store_views.xml',
+        'views/library_order_views.xml',
+        'views/library_menu.xml',
+        'data/library_data.xml',
+    ],
+    'application': True,
+}
