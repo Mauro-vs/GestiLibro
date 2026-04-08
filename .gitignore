@@ -1,0 +1,17 @@
+# Ignore PostgreSQL data directory (do NOT commit DB files)
+volumesOdoo/dataPostgreSQL/
+volumesOdoo/dataPostgreSQL/**
+
+# Ignore common OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
