@@ -1,6 +1,6 @@
 <odoo>
-      <record id="view_library_book_tree" model="ir.ui.view">
-    <field name="name">library.book.tree</field>
+  <record id="view_library_book_list" model="ir.ui.view">
+    <field name="name">library.book.list</field>
     <field name="model">library.book</field>
     <field name="arch" type="xml">
       <list>
@@ -9,6 +9,8 @@
         <field name="publisher_id"/>
         <field name="publication_year"/>
         <field name="price_sale"/>
+        <field name="stock_total"/>
+        <field name="state"/>
       </list>
     </field>
   </record>
@@ -32,7 +34,29 @@
             <field name="price_cost"/>
             <field name="currency_id"/>
             <field name="state"/>
+            <field name="stock_total" readonly="1"/>
           </group>
+          <notebook>
+            <page string="Stock por tienda">
+              <field name="stock_ids">
+                <list editable="bottom">
+                  <field name="store_id"/>
+                  <field name="quantity"/>
+                  <field name="quantity_minimum"/>
+                </list>
+              </field>
+            </page>
+            <page string="Ventas">
+              <field name="order_line_ids" readonly="1">
+                <list>
+                  <field name="order_id"/>
+                  <field name="quantity"/>
+                  <field name="unit_price"/>
+                  <field name="price_subtotal"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
         </sheet>
       </form>
     </field>

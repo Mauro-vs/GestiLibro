@@ -1,0 +1,20 @@
+<odoo>
+  <record id="view_partner_form_library_inherit" model="ir.ui.view">
+    <field name="name">res.partner.form.library.inherit</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet/notebook" position="inside">
+        <page string="GestiLibros">
+          <group>
+            <field name="is_library_customer"/>
+            <field name="library_customer_code"/>
+            <field name="favorite_genre"/>
+            <field name="loyalty_points"/>
+            <field name="sale_count" readonly="1"/>
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>

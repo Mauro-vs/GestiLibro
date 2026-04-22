@@ -1,6 +1,6 @@
 <odoo>
-  <record id="view_library_publisher_tree" model="ir.ui.view">
-    <field name="name">library.publisher.tree</field>
+  <record id="view_library_publisher_list" model="ir.ui.view">
+    <field name="name">library.publisher.list</field>
     <field name="model">library.publisher</field>
     <field name="arch" type="xml">
       <list>
@@ -20,6 +20,9 @@
             <field name="name"/>
             <field name="country"/>
             <field name="website"/>
+          </group>
+          <group>
+            <field name="book_ids"/>
           </group>
         </sheet>
       </form>

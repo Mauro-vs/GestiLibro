@@ -1,29 +1,31 @@
-# Biblioteca (módulo Odoo)
+# GestiLibros (módulo Odoo)
 
-Módulo Odoo `library` para gestionar libros, autores, tiendas y stock.
+Módulo Odoo para gestionar una red de tiendas de libros, con catálogo, stock y ventas.
 
-Instalación rápida:
+## Qué incluye
 
-1. Copiar la carpeta `library` dentro del `addons` de tu instancia de Odoo (por ejemplo, en `volumesOdoo/addons`).
-2. Reiniciar el servidor de Odoo o recargar los addons.
-3. Actualizar la lista de aplicaciones e instalar el módulo "Biblioteca".
+- Libros, autores y editoriales.
+- Tiendas y stock por tienda.
+- Ventas con líneas de venta por libro.
+- Vistas list/form y menús de catálogo y gestión.
+- Seguridad por grupos (usuario, vendedor, gestor).
 
-Archivos creados:
+## Relaciones principales
 
-- `models/` : modelos `book`, `author`, `store`, `stock`, `publisher`, `order`.
-- `views/` : vistas tree/form y menús básicos.
-- `security/` : grupo y `ir.model.access.csv`.
-- `data/` : datos de ejemplo.
+- Un libro puede tener varios autores y una editorial.
+- Una tienda tiene múltiples líneas de stock y ventas.
+- Una venta pertenece a una tienda y a un cliente.
+- Una venta tiene líneas de venta asociadas a libros.
 
-Recientes añadidos:
+## Instalación rápida
 
-- `publisher` (editorial): modelo `library.publisher`, vistas y demo.
-- Pedidos de venta: `library.order` y `library.order.line` con `cliente` como `res.partner` y líneas vinculadas a `library.book`.
+1. Copia la carpeta library dentro del addons de tu instancia Odoo.
+2. Reinicia Odoo o recarga addons.
+3. Actualiza la lista de aplicaciones e instala GestiLibros.
 
-Pruebas rápidas:
+## Prueba básica
 
-1. Copiar la carpeta `library` dentro del `addons` de tu instancia de Odoo.
-2. Reiniciar el servidor de Odoo o recargar los addons.
-3. Actualizar la lista de aplicaciones e instalar el módulo "Biblioteca".
-4. En el menú `Biblioteca` verás: Libros, Autores, Editoriales, Tiendas, Pedidos.
-5. Los datos demo incluyen un autor y una editorial; crea un `partner` y prueba crear un pedido.
+1. Crea una tienda.
+2. Crea uno o varios libros.
+3. Asigna stock del libro en la tienda.
+4. Crea una venta con cliente, tienda y líneas de venta.

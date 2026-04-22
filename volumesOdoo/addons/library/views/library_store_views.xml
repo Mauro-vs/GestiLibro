@@ -1,12 +1,12 @@
 <odoo>
-  <record id="view_library_store_tree" model="ir.ui.view">
-    <field name="name">library.store.tree</field>
+  <record id="view_library_store_list" model="ir.ui.view">
+    <field name="name">library.store.list</field>
     <field name="model">library.store</field>
     <field name="arch" type="xml">
       <list>
         <field name="name"/>
-          <field name="address"/>
-          <field name="responsible_id"/>
+        <field name="address"/>
+        <field name="responsible_id"/>
       </list>
     </field>
   </record>
@@ -22,6 +22,28 @@
             <field name="address"/>
             <field name="responsible_id"/>
           </group>
+          <notebook>
+            <page string="Stock">
+              <field name="stock_ids">
+                <list editable="bottom">
+                  <field name="book_id"/>
+                  <field name="quantity"/>
+                  <field name="quantity_minimum"/>
+                </list>
+              </field>
+            </page>
+            <page string="Ventas">
+              <field name="order_ids" readonly="1">
+                <list>
+                  <field name="name"/>
+                  <field name="date"/>
+                  <field name="client_id"/>
+                  <field name="state"/>
+                  <field name="amount_total"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
         </sheet>
       </form>
     </field>

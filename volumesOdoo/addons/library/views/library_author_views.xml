@@ -1,6 +1,6 @@
 <odoo>
-  <record id="view_library_author_tree" model="ir.ui.view">
-    <field name="name">library.author.tree</field>
+  <record id="view_library_author_list" model="ir.ui.view">
+    <field name="name">library.author.list</field>
     <field name="model">library.author</field>
     <field name="arch" type="xml">
       <list>
@@ -21,6 +21,9 @@
             <field name="name"/>
             <field name="nationality"/>
             <field name="date_of_birth"/>
+          </group>
+          <group>
+            <field name="book_ids" widget="many2many_tags"/>
           </group>
         </sheet>
       </form>
