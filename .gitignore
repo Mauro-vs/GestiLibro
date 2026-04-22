@@ -1,6 +1,9 @@
 # Ignore PostgreSQL data directory (do NOT commit DB files)
 volumesOdoo/dataPostgreSQL/
 volumesOdoo/dataPostgreSQL/**
+volumesOdoo/dataOdoo/
+volumesOdoo/dataOdoo/**
+
 
 # Ignore common OS/editor files
 .DS_Store
