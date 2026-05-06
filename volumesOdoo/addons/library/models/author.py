@@ -8,6 +8,7 @@ class LibraryAuthor(models.Model):
     name = fields.Char(string='Nombre', required=True)
     nationality = fields.Char(string='Nacionalidad')
     date_of_birth = fields.Date(string='Fecha de nacimiento')
+    # Relación Many2many con tabla explícita: rápida y directa.
     book_ids = fields.Many2many(
         'library.book',
         'library_book_author_rel',

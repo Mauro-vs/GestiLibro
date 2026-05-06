@@ -19,23 +19,29 @@
     <field name="model">library.order</field>
     <field name="arch" type="xml">
       <form>
+        <header>
+          <button name="action_confirm" type="object" string="Confirmar" class="btn-primary" invisible="state != 'draft'"/>
+          <button name="action_done" type="object" string="Marcar como hecho" class="btn-primary" invisible="state != 'confirmed'"/>
+          <button name="action_cancel" type="object" string="Cancelar" invisible="state not in ('draft', 'confirmed')"/>
+          <button name="action_reset_draft" type="object" string="Volver a borrador" invisible="state != 'cancel'"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done,cancel"/>
+        </header>
         <sheet>
           <group>
             <field name="name"/>
-            <field name="store_id"/>
-            <field name="client_id"/>
+            <field name="store_id" readonly="state != 'draft'"/>
+            <field name="client_id" readonly="state != 'draft'"/>
             <field name="client_is_library_customer" readonly="1"/>
             <field name="client_library_customer_code" readonly="1"/>
-            <field name="date"/>
-            <field name="state" readonly="1"/>
-            <field name="currency_id"/>
+            <field name="date" readonly="state != 'draft'"/>
+            <field name="currency_id" readonly="state != 'draft'"/>
             <field name="amount_total" readonly="1"/>
           </group>
           <notebook>
             <page string="Líneas de venta">
-              <field name="line_ids">
+              <field name="line_ids" readonly="state != 'draft'">
                 <list editable="bottom">
-                  <field name="book_id"/>
+                  <field name="book_id" domain="[('stock_ids.store_id', '=', parent.store_id), ('stock_ids.quantity', '>', 0)]"/>
                   <field name="quantity"/>
                   <field name="unit_price"/>
                   <field name="price_subtotal" readonly="1"/>
@@ -48,10 +54,34 @@
     </field>
   </record>
 
+  <record id="view_library_order_search" model="ir.ui.view">
+    <field name="name">library.order.search</field>
+    <field name="model">library.order</field>
+    <field name="type">search</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name"/>
+        <field name="client_id"/>
+        <field name="store_id"/>
+        <filter name="filter_draft" string="Borrador" domain="[('state', '=', 'draft')]"/>
+        <filter name="filter_confirmed" string="Confirmado" domain="[('state', '=', 'confirmed')]"/>
+        <filter name="filter_done" string="Hecho" domain="[('state', '=', 'done')]"/>
+        <filter name="filter_cancel" string="Cancelado" domain="[('state', '=', 'cancel')]"/>
+        <group expand="0" string="Agrupar por">
+          <filter name="group_by_store" string="Tienda" context="{'group_by': 'store_id'}"/>
+          <filter name="group_by_client" string="Cliente" context="{'group_by': 'client_id'}"/>
+          <filter name="group_by_state" string="Estado" context="{'group_by': 'state'}"/>
+          <filter name="group_by_date" string="Fecha" context="{'group_by': 'date'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
   <record id="action_library_order" model="ir.actions.act_window">
     <field name="name">Ventas</field>
     <field name="res_model">library.order</field>
     <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_library_order_search"/>
   </record>
 
 </odoo>

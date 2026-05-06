@@ -29,10 +29,26 @@
     </field>
   </record>
 
+  <record id="view_library_publisher_search" model="ir.ui.view">
+    <field name="name">library.publisher.search</field>
+    <field name="model">library.publisher</field>
+    <field name="type">search</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name"/>
+        <field name="country"/>
+        <group expand="0" string="Agrupar por">
+          <filter name="group_by_country" string="Pais" context="{'group_by': 'country'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
   <record id="action_library_publisher" model="ir.actions.act_window">
     <field name="name">Editoriales</field>
     <field name="res_model">library.publisher</field>
     <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_library_publisher_search"/>
   </record>
 
 </odoo>

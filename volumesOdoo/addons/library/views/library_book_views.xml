@@ -3,7 +3,7 @@
     <field name="name">library.book.list</field>
     <field name="model">library.book</field>
     <field name="arch" type="xml">
-      <list>
+      <list decoration-danger="state == 'out_of_stock'" decoration-muted="state == 'discontinued'">
         <field name="name"/>
         <field name="isbn"/>
         <field name="publisher_id"/>
@@ -62,10 +62,35 @@
     </field>
   </record>
 
+  <record id="view_library_book_search" model="ir.ui.view">
+    <field name="name">library.book.search</field>
+    <field name="model">library.book</field>
+    <field name="type">search</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name"/>
+        <field name="isbn"/>
+        <field name="author_ids"/>
+        <field name="publisher_id"/>
+        <filter name="filter_for_sale" string="En venta" domain="[('state', '=', 'for_sale')]"/>
+        <filter name="filter_out_of_stock" string="Sin stock" domain="[('state', '=', 'out_of_stock')]"/>
+        <filter name="filter_discontinued" string="Descatalogado" domain="[('state', '=', 'discontinued')]"/>
+        <filter name="filter_no_stock" string="Stock total = 0" domain="[('stock_total', '=', 0)]"/>
+        <group expand="0" string="Agrupar por">
+          <filter name="group_by_publisher" string="Editorial" context="{'group_by': 'publisher_id'}"/>
+          <filter name="group_by_genre" string="Genero" context="{'group_by': 'genre'}"/>
+          <filter name="group_by_state" string="Estado" context="{'group_by': 'state'}"/>
+          <filter name="group_by_year" string="Año" context="{'group_by': 'publication_year'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
   <record id="action_library_book" model="ir.actions.act_window">
     <field name="name">Libros</field>
     <field name="res_model">library.book</field>
     <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_library_book_search"/>
     <field name="help" type="html">
       <p class="o_view_nocontent_smiling_face">Crea tu primer libro</p>
     </field>

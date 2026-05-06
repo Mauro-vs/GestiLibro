@@ -49,10 +49,26 @@
     </field>
   </record>
 
+  <record id="view_library_store_search" model="ir.ui.view">
+    <field name="name">library.store.search</field>
+    <field name="model">library.store</field>
+    <field name="type">search</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name"/>
+        <field name="responsible_id"/>
+        <group expand="0" string="Agrupar por">
+          <filter name="group_by_responsible" string="Responsable" context="{'group_by': 'responsible_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
   <record id="action_library_store" model="ir.actions.act_window">
     <field name="name">Tiendas</field>
     <field name="res_model">library.store</field>
     <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_library_store_search"/>
   </record>
 
 </odoo>
