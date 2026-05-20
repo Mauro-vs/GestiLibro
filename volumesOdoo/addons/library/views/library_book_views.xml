@@ -4,7 +4,6 @@
     <field name="model">library.book</field>
     <field name="arch" type="xml">
       <list decoration-danger="state == 'out_of_stock'" decoration-muted="state == 'discontinued'">
-        <field name="image_small" widget="image" optional="show"/>
         <field name="name"/>
         <field name="isbn"/>
         <field name="genre"/>
@@ -21,7 +20,7 @@
     <field name="name">library.book.kanban</field>
     <field name="model">library.book</field>
     <field name="arch" type="xml">
-      <kanban default_group_by="state" class="o_kanban_small_column">
+      <kanban default_group_by="genre">
         <field name="name"/>
         <field name="isbn"/>
         <field name="state"/>
@@ -29,29 +28,41 @@
         <field name="price_sale"/>
         <field name="stock_total"/>
         <field name="publisher_id"/>
+        <field name="author_ids"/>
+        <field name="publication_year"/>
         <field name="image_small"/>
         <templates>
           <t t-name="card">
-            <div class="o_kanban_image">
-              <field name="image_small" widget="image" alt="Portada"/>
+            <!-- Portada -->
+            <div style="height:160px; overflow:hidden; background:#e9ecef; display:flex; align-items:center; justify-content:center; border-bottom:1px solid #dee2e6;">
+              <t t-if="record.image_small.raw_value">
+                <img t-att-src="record.image_small.value"
+                     style="width:100%; height:160px; object-fit:cover;" alt="Portada"/>
+              </t>
+              <t t-else="">
+                <i class="fa fa-book fa-4x" style="color:#ced4da;"/>
+              </t>
             </div>
-            <div class="o_kanban_details">
-              <strong class="o_kanban_record_title">
+
+            <!-- Cuerpo -->
+            <div class="p-2">
+              <!-- Título -->
+              <strong class="d-block mb-1" style="font-size:13px; line-height:1.3; min-height:32px;">
                 <field name="name"/>
               </strong>
-              <div class="o_kanban_tags_section">
-                <field name="genre" widget="badge"/>
+
+              <!-- Autor -->
+              <div class="text-muted mb-2" style="font-size:11px;">
+                <field name="author_ids" widget="many2many_tags" readonly="1"/>
               </div>
-              <ul>
-                <li><field name="publisher_id"/></li>
-                <li>Stock: <field name="stock_total"/></li>
-                <li>PVP: <field name="price_sale"/></li>
-              </ul>
-              <div class="o_kanban_record_bottom">
-                <div class="oe_kanban_bottom_left">
-                  <field name="state" widget="label_selection"
-                         options="{'classes': {'for_sale': 'success', 'out_of_stock': 'danger', 'discontinued': 'default'}}"/>
-                </div>
+
+              <!-- Precio y estado -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-bold" style="font-size:13px; color:#0d6efd;">
+                  <field name="price_sale" widget="monetary"/>
+                </span>
+                <field name="state" widget="label_selection"
+                       options="{'classes': {'for_sale': 'success', 'out_of_stock': 'danger', 'discontinued': 'secondary'}}"/>
               </div>
             </div>
           </t>
