@@ -3,7 +3,7 @@
     <field name="name">library.order.list</field>
     <field name="model">library.order</field>
     <field name="arch" type="xml">
-      <list>
+      <list decoration-info="state == 'draft'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'">
         <field name="name"/>
         <field name="store_id"/>
         <field name="client_id"/>
@@ -20,22 +20,36 @@
     <field name="arch" type="xml">
       <form>
         <header>
-          <button name="action_confirm" type="object" string="Confirmar" class="btn-primary" invisible="state != 'draft'"/>
-          <button name="action_done" type="object" string="Marcar como hecho" class="btn-primary" invisible="state != 'confirmed'"/>
-          <button name="action_cancel" type="object" string="Cancelar" invisible="state not in ('draft', 'confirmed')"/>
-          <button name="action_reset_draft" type="object" string="Volver a borrador" invisible="state != 'cancel'"/>
+          <button name="action_confirm" type="object" string="Confirmar"
+                  class="btn-primary" invisible="state != 'draft'"/>
+          <button name="action_done" type="object" string="Marcar como hecho"
+                  class="btn-primary" invisible="state != 'confirmed'"/>
+          <button name="action_cancel" type="object" string="Cancelar"
+                  invisible="state not in ('draft', 'confirmed')"/>
+          <button name="action_reset_draft" type="object" string="Volver a borrador"
+                  invisible="state != 'cancel'"/>
+          <!-- Botón para abrir la factura cuando ya existe -->
+          <button name="action_view_invoice" type="object" string="Ver factura"
+                  invisible="not invoice_id" class="btn-secondary"/>
           <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done,cancel"/>
         </header>
         <sheet>
+          <div class="oe_title">
+            <h1><field name="name" readonly="1"/></h1>
+          </div>
           <group>
-            <field name="name"/>
-            <field name="store_id" readonly="state != 'draft'"/>
-            <field name="client_id" readonly="state != 'draft'"/>
-            <field name="client_is_library_customer" readonly="1"/>
-            <field name="client_library_customer_code" readonly="1"/>
-            <field name="date" readonly="state != 'draft'"/>
-            <field name="currency_id" readonly="state != 'draft'"/>
-            <field name="amount_total" readonly="1"/>
+            <group string="Datos del pedido">
+              <field name="store_id" readonly="state != 'draft'"/>
+              <field name="client_id" readonly="state != 'draft'"/>
+              <field name="date" readonly="state != 'draft'"/>
+              <field name="currency_id" readonly="state != 'draft'"/>
+            </group>
+            <group string="Cliente">
+              <field name="client_is_library_customer" readonly="1"/>
+              <field name="client_library_customer_code" readonly="1"/>
+              <field name="invoice_id" readonly="1"/>
+              <field name="amount_total" readonly="1"/>
+            </group>
           </group>
           <notebook>
             <page string="Líneas de venta">
@@ -83,6 +97,4 @@
     <field name="view_mode">list,form</field>
     <field name="search_view_id" ref="view_library_order_search"/>
   </record>
-
 </odoo>
-  

@@ -1,24 +1,577 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <!-- Datos demo mínimos para la instalación -->
+
+  <!-- ============================================================
+       EDITORIALES (12)
+  ============================================================ -->
   <record id="demo_publisher_1" model="library.publisher">
-    <field name="name">Editorial Demo</field>
+    <field name="name">Planeta</field>
     <field name="country">España</field>
-    <field name="website">https://example.com</field>
+    <field name="website">https://www.planeta.es</field>
+    <field name="phone">+34 932 000 000</field>
   </record>
 
+  <record id="demo_publisher_2" model="library.publisher">
+    <field name="name">Anagrama</field>
+    <field name="country">España</field>
+    <field name="website">https://www.anagrama-ed.es</field>
+    <field name="phone">+34 932 080 200</field>
+  </record>
+
+  <record id="demo_publisher_3" model="library.publisher">
+    <field name="name">Penguin Random House</field>
+    <field name="country">Estados Unidos</field>
+    <field name="website">https://www.penguinrandomhouse.com</field>
+    <field name="phone">+1 212 366 2000</field>
+  </record>
+
+  <record id="demo_publisher_4" model="library.publisher">
+    <field name="name">HarperCollins</field>
+    <field name="country">Estados Unidos</field>
+    <field name="website">https://www.harpercollins.com</field>
+    <field name="phone">+1 212 207 7000</field>
+  </record>
+
+  <record id="demo_publisher_5" model="library.publisher">
+    <field name="name">Alfaguara</field>
+    <field name="country">España</field>
+    <field name="website">https://www.alfaguara.com</field>
+    <field name="phone">+34 913 744 000</field>
+  </record>
+
+  <record id="demo_publisher_6" model="library.publisher">
+    <field name="name">Seix Barral</field>
+    <field name="country">España</field>
+    <field name="website">https://www.seixbarral.es</field>
+    <field name="phone">+34 932 080 300</field>
+  </record>
+
+  <record id="demo_publisher_7" model="library.publisher">
+    <field name="name">Debolsillo</field>
+    <field name="country">España</field>
+    <field name="website">https://www.megustaleer.com</field>
+    <field name="phone">+34 932 080 100</field>
+  </record>
+
+  <record id="demo_publisher_8" model="library.publisher">
+    <field name="name">Ediciones B</field>
+    <field name="country">España</field>
+    <field name="website">https://www.edicionesb.com</field>
+    <field name="phone">+34 932 080 500</field>
+  </record>
+
+  <record id="demo_publisher_9" model="library.publisher">
+    <field name="name">Tusquets</field>
+    <field name="country">España</field>
+    <field name="website">https://www.tusquetseditores.com</field>
+    <field name="phone">+34 932 080 800</field>
+  </record>
+
+  <record id="demo_publisher_10" model="library.publisher">
+    <field name="name">Salamandra</field>
+    <field name="country">España</field>
+    <field name="website">https://www.salamandra.info</field>
+    <field name="phone">+34 934 157 411</field>
+  </record>
+
+  <record id="demo_publisher_11" model="library.publisher">
+    <field name="name">Destino</field>
+    <field name="country">España</field>
+    <field name="website">https://www.destinolibros.com</field>
+    <field name="phone">+34 932 080 600</field>
+  </record>
+
+  <record id="demo_publisher_12" model="library.publisher">
+    <field name="name">Siruela</field>
+    <field name="country">España</field>
+    <field name="website">https://www.siruela.com</field>
+    <field name="phone">+34 915 412 654</field>
+  </record>
+
+  <!-- ============================================================
+       AUTORES (12)
+  ============================================================ -->
   <record id="demo_author_1" model="library.author">
-    <field name="name">Autor Demo</field>
-    <field name="nationality">España</field>
-    <field name="date_of_birth">1970-01-01</field>
+    <field name="name">Gabriel García Márquez</field>
+    <field name="nationality">Colombia</field>
+    <field name="date_of_birth">1927-03-06</field>
+    <field name="biography">Premio Nobel de Literatura 1982. Máximo exponente del realismo mágico latinoamericano, conocido mundialmente por Cien años de soledad.</field>
   </record>
 
+  <record id="demo_author_2" model="library.author">
+    <field name="name">Isabel Allende</field>
+    <field name="nationality">Chile</field>
+    <field name="date_of_birth">1942-08-02</field>
+    <field name="biography">Una de las escritoras latinoamericanas más leídas del mundo. Su obra mezcla realidad y fantasía con una fuerte perspectiva femenina.</field>
+  </record>
+
+  <record id="demo_author_3" model="library.author">
+    <field name="name">Jorge Luis Borges</field>
+    <field name="nationality">Argentina</field>
+    <field name="date_of_birth">1899-08-24</field>
+    <field name="biography">Maestro del cuento filosófico y del relato fantástico. Considerado uno de los escritores más importantes del siglo XX en lengua española.</field>
+  </record>
+
+  <record id="demo_author_4" model="library.author">
+    <field name="name">Mario Vargas Llosa</field>
+    <field name="nationality">Perú</field>
+    <field name="date_of_birth">1936-03-28</field>
+    <field name="biography">Premio Nobel de Literatura 2010. Novelista, ensayista y político peruano, figura central de la narrativa latinoamericana contemporánea.</field>
+  </record>
+
+  <record id="demo_author_5" model="library.author">
+    <field name="name">Julio Cortázar</field>
+    <field name="nationality">Argentina</field>
+    <field name="date_of_birth">1914-08-26</field>
+    <field name="biography">Renovador del cuento y la novela en lengua española. Su obra Rayuela es un hito de la literatura experimental del siglo XX.</field>
+  </record>
+
+  <record id="demo_author_6" model="library.author">
+    <field name="name">Ernest Hemingway</field>
+    <field name="nationality">Estados Unidos</field>
+    <field name="date_of_birth">1899-07-21</field>
+    <field name="biography">Premio Nobel de Literatura 1954. Su estilo sobrio e iceberg theory influyeron profundamente en la narrativa del siglo XX.</field>
+  </record>
+
+  <record id="demo_author_7" model="library.author">
+    <field name="name">Franz Kafka</field>
+    <field name="nationality">República Checa</field>
+    <field name="date_of_birth">1883-07-03</field>
+    <field name="biography">Escritor de lengua alemana cuya obra explora la alienación y la burocracia. Su nombre dio lugar al adjetivo kafkiano.</field>
+  </record>
+
+  <record id="demo_author_8" model="library.author">
+    <field name="name">Fiódor Dostoyevski</field>
+    <field name="nationality">Rusia</field>
+    <field name="date_of_birth">1821-11-11</field>
+    <field name="biography">Uno de los grandes novelistas de la literatura universal. Exploró la psicología humana, la moral y la condición existencial en sus obras.</field>
+  </record>
+
+  <record id="demo_author_9" model="library.author">
+    <field name="name">León Tolstói</field>
+    <field name="nationality">Rusia</field>
+    <field name="date_of_birth">1828-09-09</field>
+    <field name="biography">Maestro de la novela realista rusa. Guerra y paz y Ana Karenina son consideradas obras cumbre de la literatura mundial.</field>
+  </record>
+
+  <record id="demo_author_10" model="library.author">
+    <field name="name">Miguel de Cervantes</field>
+    <field name="nationality">España</field>
+    <field name="date_of_birth">1547-09-29</field>
+    <field name="biography">Autor de El ingenioso hidalgo don Quijote de la Mancha, considerada la primera novela moderna y una de las obras más importantes de la literatura universal.</field>
+  </record>
+
+  <record id="demo_author_11" model="library.author">
+    <field name="name">Federico García Lorca</field>
+    <field name="nationality">España</field>
+    <field name="date_of_birth">1898-06-05</field>
+    <field name="biography">Poeta y dramaturgo español de la Generación del 27. Sus obras teatrales y poéticas son referentes de la literatura española del siglo XX.</field>
+  </record>
+
+  <record id="demo_author_12" model="library.author">
+    <field name="name">Pablo Neruda</field>
+    <field name="nationality">Chile</field>
+    <field name="date_of_birth">1904-07-12</field>
+    <field name="biography">Premio Nobel de Literatura 1971. Uno de los poetas en lengua española más influyentes del siglo XX, conocido por sus Veinte poemas de amor.</field>
+  </record>
+
+  <!-- ============================================================
+       LIBROS (12)
+  ============================================================ -->
   <record id="demo_book_1" model="library.book">
-    <field name="name">Libro Demo</field>
-    <field name="isbn">000-0000000000</field>
-    <field name="publication_year">2020</field>
+    <field name="name">Cien años de soledad</field>
+    <field name="isbn">978-8497592208</field>
+    <field name="publication_year">1967</field>
     <field name="publisher_id" ref="demo_publisher_1"/>
     <field name="author_ids" eval="[(4, ref('demo_author_1'))]"/>
-    <field name="price_sale">10.0</field>
-    <field name="price_cost">5.0</field>
+    <field name="price_sale">18.95</field>
+    <field name="price_cost">9.00</field>
+    <field name="genre">fiction</field>
+    <field name="state">for_sale</field>
+    <field name="description">La historia de la familia Buendía a lo largo de siete generaciones en el pueblo ficticio de Macondo.</field>
   </record>
+
+  <record id="demo_book_2" model="library.book">
+    <field name="name">La casa de los espíritus</field>
+    <field name="isbn">978-8401352720</field>
+    <field name="publication_year">1982</field>
+    <field name="publisher_id" ref="demo_publisher_2"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_2'))]"/>
+    <field name="price_sale">16.50</field>
+    <field name="price_cost">8.00</field>
+    <field name="genre">fiction</field>
+    <field name="state">for_sale</field>
+    <field name="description">Una saga familiar que abarca cuatro generaciones en un país latinoamericano sin nombre.</field>
+  </record>
+
+  <record id="demo_book_3" model="library.book">
+    <field name="name">Ficciones</field>
+    <field name="isbn">978-8499892115</field>
+    <field name="publication_year">1944</field>
+    <field name="publisher_id" ref="demo_publisher_5"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_3'))]"/>
+    <field name="price_sale">14.90</field>
+    <field name="price_cost">7.00</field>
+    <field name="genre">fiction</field>
+    <field name="state">for_sale</field>
+    <field name="description">Colección de cuentos que mezcla filosofía, matemáticas y metaficción en laberintos literarios únicos.</field>
+  </record>
+
+  <record id="demo_book_4" model="library.book">
+    <field name="name">La ciudad y los perros</field>
+    <field name="isbn">978-8420471969</field>
+    <field name="publication_year">1963</field>
+    <field name="publisher_id" ref="demo_publisher_6"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_4'))]"/>
+    <field name="price_sale">17.50</field>
+    <field name="price_cost">8.50</field>
+    <field name="genre">fiction</field>
+    <field name="state">for_sale</field>
+    <field name="description">Retrato crudo y poderoso de la vida en una academia militar de Lima y de la violencia como rito de iniciación.</field>
+  </record>
+
+  <record id="demo_book_5" model="library.book">
+    <field name="name">Rayuela</field>
+    <field name="isbn">978-8437604572</field>
+    <field name="publication_year">1963</field>
+    <field name="publisher_id" ref="demo_publisher_5"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_5'))]"/>
+    <field name="price_sale">19.90</field>
+    <field name="price_cost">9.50</field>
+    <field name="genre">fiction</field>
+    <field name="state">for_sale</field>
+    <field name="description">Novela experimental que puede leerse en múltiples órdenes, explorando la búsqueda de sentido entre París y Buenos Aires.</field>
+  </record>
+
+  <record id="demo_book_6" model="library.book">
+    <field name="name">El viejo y el mar</field>
+    <field name="isbn">978-8408163244</field>
+    <field name="publication_year">1952</field>
+    <field name="publisher_id" ref="demo_publisher_11"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_6'))]"/>
+    <field name="price_sale">12.90</field>
+    <field name="price_cost">6.00</field>
+    <field name="genre">fiction</field>
+    <field name="state">for_sale</field>
+    <field name="description">La lucha épica de un viejo pescador cubano contra un enorme marlín en el Golfo de México.</field>
+  </record>
+
+  <record id="demo_book_7" model="library.book">
+    <field name="name">La metamorfosis</field>
+    <field name="isbn">978-8497405058</field>
+    <field name="publication_year">1915</field>
+    <field name="publisher_id" ref="demo_publisher_12"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_7'))]"/>
+    <field name="price_sale">10.95</field>
+    <field name="price_cost">5.00</field>
+    <field name="genre">fiction</field>
+    <field name="state">for_sale</field>
+    <field name="description">Un viajante de comercio amanece convertido en insecto y debe afrontar el rechazo progresivo de su propia familia.</field>
+  </record>
+
+  <record id="demo_book_8" model="library.book">
+    <field name="name">Crimen y castigo</field>
+    <field name="isbn">978-8420677439</field>
+    <field name="publication_year">1866</field>
+    <field name="publisher_id" ref="demo_publisher_9"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_8'))]"/>
+    <field name="price_sale">15.90</field>
+    <field name="price_cost">7.50</field>
+    <field name="genre">fiction</field>
+    <field name="state">for_sale</field>
+    <field name="description">Un estudiante en San Petersburgo comete un crimen y lidia con el peso psicológico de su culpa y su redención.</field>
+  </record>
+
+  <record id="demo_book_9" model="library.book">
+    <field name="name">Ana Karenina</field>
+    <field name="isbn">978-8467035766</field>
+    <field name="publication_year">1878</field>
+    <field name="publisher_id" ref="demo_publisher_4"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_9'))]"/>
+    <field name="price_sale">21.00</field>
+    <field name="price_cost">10.00</field>
+    <field name="genre">fiction</field>
+    <field name="state">for_sale</field>
+    <field name="description">Historia de la trágica pasión de Ana Karenina en la alta sociedad rusa del siglo XIX.</field>
+  </record>
+
+  <record id="demo_book_10" model="library.book">
+    <field name="name">Don Quijote de la Mancha</field>
+    <field name="isbn">978-8467021752</field>
+    <field name="publication_year">1605</field>
+    <field name="publisher_id" ref="demo_publisher_10"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_10'))]"/>
+    <field name="price_sale">22.50</field>
+    <field name="price_cost">11.00</field>
+    <field name="genre">fiction</field>
+    <field name="state">for_sale</field>
+    <field name="description">Las aventuras del ingenioso hidalgo manchego que, enloquecido por la lectura de novelas de caballerías, sale a desfacer entuertos.</field>
+  </record>
+
+  <record id="demo_book_11" model="library.book">
+    <field name="name">Bodas de sangre</field>
+    <field name="isbn">978-8437600222</field>
+    <field name="publication_year">1933</field>
+    <field name="publisher_id" ref="demo_publisher_8"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_11'))]"/>
+    <field name="price_sale">11.50</field>
+    <field name="price_cost">5.50</field>
+    <field name="genre">other</field>
+    <field name="state">for_sale</field>
+    <field name="description">Tragedia poética sobre el honor, la pasión y la muerte en la Andalucía rural. Obra cumbre del teatro español.</field>
+  </record>
+
+  <record id="demo_book_12" model="library.book">
+    <field name="name">Veinte poemas de amor y una canción desesperada</field>
+    <field name="isbn">978-8420413716</field>
+    <field name="publication_year">1924</field>
+    <field name="publisher_id" ref="demo_publisher_7"/>
+    <field name="author_ids" eval="[(4, ref('demo_author_12'))]"/>
+    <field name="price_sale">9.95</field>
+    <field name="price_cost">4.50</field>
+    <field name="genre">other</field>
+    <field name="state">for_sale</field>
+    <field name="description">Poemario que marcó a una generación y convirtió a Neruda en uno de los poetas más leídos del mundo.</field>
+  </record>
+
+  <!-- ============================================================
+       TIENDAS (3)
+  ============================================================ -->
+  <record id="demo_store_1" model="library.store">
+    <field name="name">Librería Central</field>
+    <field name="address">Calle Gran Vía 28, Madrid</field>
+  </record>
+
+  <record id="demo_store_2" model="library.store">
+    <field name="name">Librería del Norte</field>
+    <field name="address">Paseo de Gracia 10, Barcelona</field>
+  </record>
+
+  <record id="demo_store_3" model="library.store">
+    <field name="name">Librería del Sur</field>
+    <field name="address">Avenida de la Constitución 5, Sevilla</field>
+  </record>
+
+  <!-- ============================================================
+       STOCK (12 libros × 3 tiendas)
+  ============================================================ -->
+  <record id="demo_stock_1_1" model="library.stock">
+    <field name="book_id" ref="demo_book_1"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">25</field><field name="quantity_minimum">5</field>
+  </record>
+  <record id="demo_stock_1_2" model="library.stock">
+    <field name="book_id" ref="demo_book_1"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">18</field><field name="quantity_minimum">3</field>
+  </record>
+  <record id="demo_stock_1_3" model="library.stock">
+    <field name="book_id" ref="demo_book_1"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">12</field><field name="quantity_minimum">3</field>
+  </record>
+
+  <record id="demo_stock_2_1" model="library.stock">
+    <field name="book_id" ref="demo_book_2"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">20</field><field name="quantity_minimum">5</field>
+  </record>
+  <record id="demo_stock_2_2" model="library.stock">
+    <field name="book_id" ref="demo_book_2"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">15</field><field name="quantity_minimum">3</field>
+  </record>
+  <record id="demo_stock_2_3" model="library.stock">
+    <field name="book_id" ref="demo_book_2"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">10</field><field name="quantity_minimum">2</field>
+  </record>
+
+  <record id="demo_stock_3_1" model="library.stock">
+    <field name="book_id" ref="demo_book_3"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">8</field><field name="quantity_minimum">2</field>
+  </record>
+  <record id="demo_stock_3_2" model="library.stock">
+    <field name="book_id" ref="demo_book_3"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">14</field><field name="quantity_minimum">3</field>
+  </record>
+  <record id="demo_stock_3_3" model="library.stock">
+    <field name="book_id" ref="demo_book_3"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">6</field><field name="quantity_minimum">2</field>
+  </record>
+
+  <record id="demo_stock_4_1" model="library.stock">
+    <field name="book_id" ref="demo_book_4"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">11</field><field name="quantity_minimum">2</field>
+  </record>
+  <record id="demo_stock_4_2" model="library.stock">
+    <field name="book_id" ref="demo_book_4"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">9</field><field name="quantity_minimum">2</field>
+  </record>
+  <record id="demo_stock_4_3" model="library.stock">
+    <field name="book_id" ref="demo_book_4"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">7</field><field name="quantity_minimum">2</field>
+  </record>
+
+  <record id="demo_stock_5_1" model="library.stock">
+    <field name="book_id" ref="demo_book_5"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">16</field><field name="quantity_minimum">4</field>
+  </record>
+  <record id="demo_stock_5_2" model="library.stock">
+    <field name="book_id" ref="demo_book_5"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">13</field><field name="quantity_minimum">3</field>
+  </record>
+  <record id="demo_stock_5_3" model="library.stock">
+    <field name="book_id" ref="demo_book_5"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">8</field><field name="quantity_minimum">2</field>
+  </record>
+
+  <record id="demo_stock_6_1" model="library.stock">
+    <field name="book_id" ref="demo_book_6"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">22</field><field name="quantity_minimum">5</field>
+  </record>
+  <record id="demo_stock_6_2" model="library.stock">
+    <field name="book_id" ref="demo_book_6"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">19</field><field name="quantity_minimum">4</field>
+  </record>
+  <record id="demo_stock_6_3" model="library.stock">
+    <field name="book_id" ref="demo_book_6"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">14</field><field name="quantity_minimum">3</field>
+  </record>
+
+  <record id="demo_stock_7_1" model="library.stock">
+    <field name="book_id" ref="demo_book_7"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">30</field><field name="quantity_minimum">5</field>
+  </record>
+  <record id="demo_stock_7_2" model="library.stock">
+    <field name="book_id" ref="demo_book_7"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">24</field><field name="quantity_minimum">5</field>
+  </record>
+  <record id="demo_stock_7_3" model="library.stock">
+    <field name="book_id" ref="demo_book_7"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">17</field><field name="quantity_minimum">3</field>
+  </record>
+
+  <record id="demo_stock_8_1" model="library.stock">
+    <field name="book_id" ref="demo_book_8"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">9</field><field name="quantity_minimum">2</field>
+  </record>
+  <record id="demo_stock_8_2" model="library.stock">
+    <field name="book_id" ref="demo_book_8"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">11</field><field name="quantity_minimum">2</field>
+  </record>
+  <record id="demo_stock_8_3" model="library.stock">
+    <field name="book_id" ref="demo_book_8"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">5</field><field name="quantity_minimum">2</field>
+  </record>
+
+  <record id="demo_stock_9_1" model="library.stock">
+    <field name="book_id" ref="demo_book_9"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">7</field><field name="quantity_minimum">2</field>
+  </record>
+  <record id="demo_stock_9_2" model="library.stock">
+    <field name="book_id" ref="demo_book_9"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">10</field><field name="quantity_minimum">2</field>
+  </record>
+  <record id="demo_stock_9_3" model="library.stock">
+    <field name="book_id" ref="demo_book_9"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">6</field><field name="quantity_minimum">2</field>
+  </record>
+
+  <record id="demo_stock_10_1" model="library.stock">
+    <field name="book_id" ref="demo_book_10"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">12</field><field name="quantity_minimum">3</field>
+  </record>
+  <record id="demo_stock_10_2" model="library.stock">
+    <field name="book_id" ref="demo_book_10"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">8</field><field name="quantity_minimum">2</field>
+  </record>
+  <record id="demo_stock_10_3" model="library.stock">
+    <field name="book_id" ref="demo_book_10"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">9</field><field name="quantity_minimum">2</field>
+  </record>
+
+  <record id="demo_stock_11_1" model="library.stock">
+    <field name="book_id" ref="demo_book_11"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">15</field><field name="quantity_minimum">3</field>
+  </record>
+  <record id="demo_stock_11_2" model="library.stock">
+    <field name="book_id" ref="demo_book_11"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">10</field><field name="quantity_minimum">2</field>
+  </record>
+  <record id="demo_stock_11_3" model="library.stock">
+    <field name="book_id" ref="demo_book_11"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">13</field><field name="quantity_minimum">3</field>
+  </record>
+
+  <record id="demo_stock_12_1" model="library.stock">
+    <field name="book_id" ref="demo_book_12"/><field name="store_id" ref="demo_store_1"/>
+    <field name="quantity">28</field><field name="quantity_minimum">5</field>
+  </record>
+  <record id="demo_stock_12_2" model="library.stock">
+    <field name="book_id" ref="demo_book_12"/><field name="store_id" ref="demo_store_2"/>
+    <field name="quantity">21</field><field name="quantity_minimum">4</field>
+  </record>
+  <record id="demo_stock_12_3" model="library.stock">
+    <field name="book_id" ref="demo_book_12"/><field name="store_id" ref="demo_store_3"/>
+    <field name="quantity">16</field><field name="quantity_minimum">3</field>
+  </record>
+
+  <!-- ============================================================
+       CLIENTES (6)
+  ============================================================ -->
+  <record id="demo_partner_1" model="res.partner">
+    <field name="name">Ana García Fernández</field>
+    <field name="email">ana.garcia@email.com</field>
+    <field name="phone">+34 612 345 678</field>
+    <field name="is_library_customer">True</field>
+    <field name="library_customer_code">GLI-001</field>
+    <field name="favorite_genre">fantasy</field>
+    <field name="loyalty_points">320</field>
+  </record>
+
+  <record id="demo_partner_2" model="res.partner">
+    <field name="name">Carlos López Martínez</field>
+    <field name="email">carlos.lopez@email.com</field>
+    <field name="phone">+34 623 456 789</field>
+    <field name="is_library_customer">True</field>
+    <field name="library_customer_code">GLI-002</field>
+    <field name="favorite_genre">novel</field>
+    <field name="loyalty_points">185</field>
+  </record>
+
+  <record id="demo_partner_3" model="res.partner">
+    <field name="name">María Rodríguez Sanz</field>
+    <field name="email">maria.rodriguez@email.com</field>
+    <field name="phone">+34 634 567 890</field>
+    <field name="is_library_customer">True</field>
+    <field name="library_customer_code">GLI-003</field>
+    <field name="favorite_genre">history</field>
+    <field name="loyalty_points">540</field>
+  </record>
+
+  <record id="demo_partner_4" model="res.partner">
+    <field name="name">Pablo Martínez Ruiz</field>
+    <field name="email">pablo.martinez@email.com</field>
+    <field name="phone">+34 645 678 901</field>
+    <field name="is_library_customer">True</field>
+    <field name="library_customer_code">GLI-004</field>
+    <field name="favorite_genre">science</field>
+    <field name="loyalty_points">95</field>
+  </record>
+
+  <record id="demo_partner_5" model="res.partner">
+    <field name="name">Laura Fernández Gil</field>
+    <field name="email">laura.fernandez@email.com</field>
+    <field name="phone">+34 656 789 012</field>
+    <field name="is_library_customer">True</field>
+    <field name="library_customer_code">GLI-005</field>
+    <field name="favorite_genre">novel</field>
+    <field name="loyalty_points">410</field>
+  </record>
+
+  <record id="demo_partner_6" model="res.partner">
+    <field name="name">Diego Sánchez Torres</field>
+    <field name="email">diego.sanchez@email.com</field>
+    <field name="phone">+34 667 890 123</field>
+    <field name="is_library_customer">True</field>
+    <field name="library_customer_code">GLI-006</field>
+    <field name="favorite_genre">other</field>
+    <field name="loyalty_points">230</field>
+  </record>
+
 </odoo>

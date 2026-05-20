@@ -2,16 +2,15 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
+
 class LibraryOrder(models.Model):
     _name = 'library.order'
     _description = 'Venta'
     _order = 'date desc, id desc'
 
-    # Datos basicos de la venta y del cliente.
-    name = fields.Char(string='Referencia', readonly=True, default='New')
+    name = fields.Char(string='Referencia', readonly=True, default='New', copy=False)
     store_id = fields.Many2one('library.store', string='Tienda', required=True)
     client_id = fields.Many2one('res.partner', string='Cliente', required=True)
-    # Campos relacionados para facilitar búsquedas y filtros desde la orden.
     client_is_library_customer = fields.Boolean(
         string='Cliente GestiLibros',
         related='client_id.is_library_customer',
@@ -24,7 +23,6 @@ class LibraryOrder(models.Model):
         readonly=True,
         store=True,
     )
-    # Estado de la venta y lineas asociadas.
     date = fields.Datetime(string='Fecha', default=fields.Datetime.now)
     state = fields.Selection([
         ('draft', 'Borrador'),
@@ -40,47 +38,84 @@ class LibraryOrder(models.Model):
         required=True,
     )
     amount_total = fields.Monetary(string='Total', compute='_compute_amount_total', store=True, readonly=True)
+    # Referencia a la factura generada al confirmar
+    invoice_id = fields.Many2one('account.move', string='Factura', readonly=True, copy=False)
 
     @api.depends('line_ids.price_subtotal')
     def _compute_amount_total(self):
-        # Total de la venta sumando subtotales de lineas.
         for record in self:
             record.amount_total = sum(record.line_ids.mapped('price_subtotal'))
 
     def action_confirm(self):
-        # Accion de flujo: valida y confirma una venta.
-        # Comentario: validar stock antes de consumirlo evita ventas sin stock.
         for order in self:
             if not order.line_ids:
                 raise ValidationError('No puedes confirmar una venta sin lineas.')
             order._check_stock_available()
             order._consume_stock()
+            # Asignar número de secuencia al confirmar (igual que hace sale.order)
+            if order.name == 'New':
+                order.name = self.env['ir.sequence'].next_by_code('library.order') or 'New'
+            # Crear factura automáticamente en el módulo de Contabilidad
+            invoice = order._create_invoice()
+            order.invoice_id = invoice.id
             order.state = 'confirmed'
 
     def action_done(self):
-        # Marca como hecha y consume stock si venia en borrador.
         for order in self:
             if order.state == 'draft':
                 if not order.line_ids:
                     raise ValidationError('No puedes confirmar una venta sin lineas.')
                 order._check_stock_available()
                 order._consume_stock()
+                if order.name == 'New':
+                    order.name = self.env['ir.sequence'].next_by_code('library.order') or 'New'
             order.state = 'done'
 
     def action_cancel(self):
-        # Cancela la venta sin modificar stock (se mantiene la decision actual).
         for order in self:
             order.state = 'cancel'
 
     def action_reset_draft(self):
-        # Devuelve a borrador para re-editar la venta.
         for order in self:
             order.state = 'draft'
 
+    def action_view_invoice(self):
+        # Abre la factura asociada directamente desde el pedido.
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Factura',
+            'res_model': 'account.move',
+            'res_id': self.invoice_id.id,
+            'view_mode': 'form',
+        }
+
+    def _create_invoice(self):
+        # Genera una factura de cliente (out_invoice) a partir de las líneas
+        # del pedido. Aprovecha la integración con account.move de Odoo.
+        # Las líneas se mapean a account.move.line con tipo 'product'.
+        self.ensure_one()
+        move_lines = []
+        for line in self.line_ids:
+            move_lines.append((0, 0, {
+                'name': line.book_id.display_name,
+                'quantity': line.quantity,
+                'price_unit': line.unit_price,
+                # account_id es opcional: si la empresa tiene cuenta de ingresos
+                # por defecto, Odoo la asigna automáticamente.
+            }))
+        invoice = self.env['account.move'].create({
+            'move_type': 'out_invoice',
+            'partner_id': self.client_id.id,
+            'invoice_date': fields.Date.today(),
+            'currency_id': self.currency_id.id,
+            'invoice_line_ids': move_lines,
+            # Referencia al pedido para trazabilidad
+            'ref': self.name if self.name != 'New' else False,
+        })
+        return invoice
+
     def _get_qty_by_book(self):
-        # Agrupa cantidades por libro para validar stock en ventas con lineas repetidas.
-        # Explicación: si un pedido tiene dos líneas del mismo libro, sumamos
-        # las cantidades para hacer una única comprobación de stock.
         qty_by_book = {}
         book_by_id = {}
         for line in self.line_ids:
@@ -92,13 +127,6 @@ class LibraryOrder(models.Model):
         return qty_by_book, book_by_id
 
     def _check_stock_available(self):
-        # Verifica que la tienda tenga stock suficiente antes de confirmar.
-        # Nota importante sobre concurrencia:
-        # - En entornos con varios usuarios simultáneos, leer la cantidad
-        #   y luego restarla puede producir condiciones de carrera.
-        # - Para producción con tráfico, considera usar bloqueo de fila
-        #   (SELECT FOR UPDATE) o el módulo `stock` de Odoo que maneja
-        #   reservas y movimientos de forma segura.
         stock_model = self.env['library.stock']
         for order in self:
             if not order.store_id:
@@ -118,11 +146,6 @@ class LibraryOrder(models.Model):
                     )
 
     def _consume_stock(self):
-        # Descuenta stock por tienda tras confirmar o finalizar una venta.
-        # Aviso: aquí se realiza la resta directa sobre `quantity`.
-        # En escenarios concurrentes esto puede permitir sobreventa si
-        # dos transacciones leen el mismo valor antes de restarlo.
-        # Si necesitas seguridad, hay que aplicar locking o usar `stock`.
         stock_model = self.env['library.stock']
         for order in self:
             if not order.store_id:
@@ -140,9 +163,4 @@ class LibraryOrder(models.Model):
                         'No hay stock suficiente para %s en %s. Disponible: %s.'
                         % (book.display_name, order.store_id.display_name, available)
                     )
-                # Resta directa del stock. Se podría reemplazar por
-                # un método que cree movimientos y reservas si se requiere
-                # trazabilidad o seguridad frente a concurrencia.
                 stock_line.quantity -= requested_qty
-
-

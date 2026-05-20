@@ -5,10 +5,13 @@
     'description': 'Gestiona libros, autores, editoriales, tiendas, stock y ventas',
     'author': 'Mauro',
     'category': 'Gestilibros',
-    'depends': ['base'],
+    # account necesario para crear facturas con account.move
+    'depends': ['base', 'account'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'data/library_sequence.xml',
+        'data/library_data.xml',
         'views/library_partner_views.xml',
         'views/library_book_views.xml',
         'views/library_author_views.xml',
@@ -16,7 +19,6 @@
         'views/library_store_views.xml',
         'views/library_order_views.xml',
         'views/library_menu.xml',
-        'data/library_data.xml',
     ],
     'application': True,
 }

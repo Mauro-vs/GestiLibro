@@ -20,6 +20,7 @@
             <field name="name"/>
             <field name="country"/>
             <field name="website"/>
+            <field name="phone"/>
           </group>
           <group>
             <field name="book_ids"/>

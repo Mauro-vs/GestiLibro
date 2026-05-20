@@ -4,8 +4,10 @@
     <field name="model">library.book</field>
     <field name="arch" type="xml">
       <list decoration-danger="state == 'out_of_stock'" decoration-muted="state == 'discontinued'">
+        <field name="image_small" widget="image" optional="show"/>
         <field name="name"/>
         <field name="isbn"/>
+        <field name="genre"/>
         <field name="publisher_id"/>
         <field name="publication_year"/>
         <field name="price_sale"/>
@@ -15,26 +17,88 @@
     </field>
   </record>
 
+  <record id="view_library_book_kanban" model="ir.ui.view">
+    <field name="name">library.book.kanban</field>
+    <field name="model">library.book</field>
+    <field name="arch" type="xml">
+      <kanban default_group_by="state" class="o_kanban_small_column">
+        <field name="name"/>
+        <field name="isbn"/>
+        <field name="state"/>
+        <field name="genre"/>
+        <field name="price_sale"/>
+        <field name="stock_total"/>
+        <field name="publisher_id"/>
+        <field name="image_small"/>
+        <templates>
+          <t t-name="card">
+            <div class="o_kanban_image">
+              <field name="image_small" widget="image" alt="Portada"/>
+            </div>
+            <div class="o_kanban_details">
+              <strong class="o_kanban_record_title">
+                <field name="name"/>
+              </strong>
+              <div class="o_kanban_tags_section">
+                <field name="genre" widget="badge"/>
+              </div>
+              <ul>
+                <li><field name="publisher_id"/></li>
+                <li>Stock: <field name="stock_total"/></li>
+                <li>PVP: <field name="price_sale"/></li>
+              </ul>
+              <div class="o_kanban_record_bottom">
+                <div class="oe_kanban_bottom_left">
+                  <field name="state" widget="label_selection"
+                         options="{'classes': {'for_sale': 'success', 'out_of_stock': 'danger', 'discontinued': 'default'}}"/>
+                </div>
+              </div>
+            </div>
+          </t>
+        </templates>
+      </kanban>
+    </field>
+  </record>
+
   <record id="view_library_book_form" model="ir.ui.view">
     <field name="name">library.book.form</field>
     <field name="model">library.book</field>
     <field name="arch" type="xml">
       <form>
+        <header>
+          <!-- Botón para marcar sin stock, visible solo cuando está en venta -->
+          <button name="action_mark_out_of_stock" type="object"
+                  string="Marcar como agotado"
+                  invisible="state != 'for_sale'"/>
+          <!-- Botón para reactiva el libro si estaba sin stock o descatalogado -->
+          <button name="action_mark_for_sale" type="object"
+                  string="Volver a en venta"
+                  invisible="state == 'for_sale'"/>
+          <field name="state" widget="statusbar" statusbar_visible="for_sale,out_of_stock,discontinued"/>
+        </header>
         <sheet>
+          <!-- Portada a la derecha del formulario -->
+          <field name="image" widget="image" class="oe_avatar" readonly="0"/>
+          <div class="oe_title">
+            <h1><field name="name" placeholder="Título del libro"/></h1>
+          </div>
           <group>
-            <field name="name"/>
-            <field name="isbn"/>
-            <field name="author_ids"/>
-            <field name="publication_year"/>
-            <field name="genre"/>
-            <field name="publisher_id"/>
+            <group string="Datos del libro">
+              <field name="isbn"/>
+              <field name="author_ids" widget="many2many_tags"/>
+              <field name="publication_year"/>
+              <field name="genre"/>
+              <field name="publisher_id"/>
+            </group>
+            <group string="Precios y stock">
+              <field name="price_sale"/>
+              <field name="price_cost"/>
+              <field name="currency_id"/>
+              <field name="stock_total" readonly="1"/>
+            </group>
           </group>
-          <group>
-            <field name="price_sale"/>
-            <field name="price_cost"/>
-            <field name="currency_id"/>
-            <field name="state"/>
-            <field name="stock_total" readonly="1"/>
+          <group string="Descripción">
+            <field name="description" nolabel="1" placeholder="Añade una descripción o sinopsis del libro..."/>
           </group>
           <notebook>
             <page string="Stock por tienda">
@@ -46,7 +110,7 @@
                 </list>
               </field>
             </page>
-            <page string="Ventas">
+            <page string="Historial de ventas">
               <field name="order_line_ids" readonly="1">
                 <list>
                   <field name="order_id"/>
@@ -78,7 +142,7 @@
         <filter name="filter_no_stock" string="Stock total = 0" domain="[('stock_total', '=', 0)]"/>
         <group expand="0" string="Agrupar por">
           <filter name="group_by_publisher" string="Editorial" context="{'group_by': 'publisher_id'}"/>
-          <filter name="group_by_genre" string="Genero" context="{'group_by': 'genre'}"/>
+          <filter name="group_by_genre" string="Género" context="{'group_by': 'genre'}"/>
           <filter name="group_by_state" string="Estado" context="{'group_by': 'state'}"/>
           <filter name="group_by_year" string="Año" context="{'group_by': 'publication_year'}"/>
         </group>
@@ -89,7 +153,8 @@
   <record id="action_library_book" model="ir.actions.act_window">
     <field name="name">Libros</field>
     <field name="res_model">library.book</field>
-    <field name="view_mode">list,form</field>
+    <!-- kanban añadido como vista por defecto junto a list y form -->
+    <field name="view_mode">kanban,list,form</field>
     <field name="search_view_id" ref="view_library_book_search"/>
     <field name="help" type="html">
       <p class="o_view_nocontent_smiling_face">Crea tu primer libro</p>

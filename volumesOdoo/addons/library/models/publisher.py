@@ -9,4 +9,5 @@ class LibraryPublisher(models.Model):
     name = fields.Char(string='Nombre', required=True)
     country = fields.Char(string='País')
     website = fields.Char(string='Sitio web')
+    phone = fields.Char(string='Teléfono')
     book_ids = fields.One2many('library.book', 'publisher_id', string='Libros')
