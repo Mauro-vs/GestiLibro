@@ -4,14 +4,35 @@
     <field name="model">res.partner</field>
     <field name="inherit_id" ref="base.view_partner_form"/>
     <field name="arch" type="xml">
+      <!-- Stat button: muestra el número de ventas y abre la lista al hacer clic -->
+      <xpath expr="//div[@name='button_box']" position="inside">
+        <button class="oe_stat_button" type="object"
+                name="action_view_library_orders"
+                icon="fa-shopping-cart"
+                invisible="not is_library_customer">
+          <field name="sale_count" widget="statinfo" string="Ventas"/>
+        </button>
+      </xpath>
       <xpath expr="//sheet/notebook" position="inside">
-        <page string="GestiLibros">
+        <page string="GestiLibros" invisible="not is_library_customer">
           <group>
-            <field name="is_library_customer"/>
-            <field name="library_customer_code"/>
-            <field name="favorite_genre"/>
-            <field name="loyalty_points"/>
-            <field name="sale_count" readonly="1"/>
+            <group string="Datos de cliente">
+              <field name="is_library_customer"/>
+              <field name="library_customer_code"/>
+              <field name="favorite_genre"/>
+              <field name="loyalty_points"/>
+            </group>
+          </group>
+          <group string="Historial de compras">
+            <field name="library_order_ids" nolabel="1" readonly="1">
+              <list>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="store_id"/>
+                <field name="state"/>
+                <field name="amount_total"/>
+              </list>
+            </field>
           </group>
         </page>
       </xpath>

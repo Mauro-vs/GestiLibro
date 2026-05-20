@@ -264,7 +264,7 @@
     <field name="author_ids" eval="[(4, ref('demo_author_7'))]"/>
     <field name="price_sale">10.95</field>
     <field name="price_cost">5.00</field>
-    <field name="genre">non_fiction</field>
+    <field name="genre">fiction</field>
     <field name="state">for_sale</field>
     <field name="description">Un viajante de comercio amanece convertido en insecto y debe afrontar el rechazo progresivo de su propia familia.</field>
   </record>
@@ -277,7 +277,7 @@
     <field name="author_ids" eval="[(4, ref('demo_author_8'))]"/>
     <field name="price_sale">15.90</field>
     <field name="price_cost">7.50</field>
-    <field name="genre">non_fiction</field>
+    <field name="genre">fiction</field>
     <field name="state">for_sale</field>
     <field name="description">Un estudiante en San Petersburgo comete un crimen y lidia con el peso psicológico de su culpa y su redención.</field>
   </record>
@@ -290,7 +290,7 @@
     <field name="author_ids" eval="[(4, ref('demo_author_9'))]"/>
     <field name="price_sale">21.00</field>
     <field name="price_cost">10.00</field>
-    <field name="genre">history</field>
+    <field name="genre">fiction</field>
     <field name="state">for_sale</field>
     <field name="description">Historia de la trágica pasión de Ana Karenina en la alta sociedad rusa del siglo XIX.</field>
   </record>
@@ -303,7 +303,7 @@
     <field name="author_ids" eval="[(4, ref('demo_author_10'))]"/>
     <field name="price_sale">22.50</field>
     <field name="price_cost">11.00</field>
-    <field name="genre">history</field>
+    <field name="genre">fiction</field>
     <field name="state">discontinued</field>
     <field name="description">Las aventuras del ingenioso hidalgo manchego que, enloquecido por la lectura de novelas de caballerías, sale a desfacer entuertos.</field>
   </record>
