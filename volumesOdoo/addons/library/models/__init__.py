@@ -6,3 +6,4 @@ from . import store
 from . import publisher
 from . import order
 from . import order_line
+from . import account_move

@@ -19,4 +19,32 @@
   <record id="base.group_system" model="res.groups">
     <field name="implied_ids" eval="[(4, ref('group_library_manager'))]"/>
   </record>
+
+  <!-- Reglas de registro (ir.rule) para library.order -->
+  <!-- Los usuarios básicos solo ven pedidos ya confirmados, hechos o cancelados,
+       no los borradores de otros usuarios -->
+  <record id="rule_library_order_user" model="ir.rule">
+    <field name="name">Pedidos: usuarios ven confirmados/hechos/cancelados</field>
+    <field name="model_id" ref="model_library_order"/>
+    <field name="domain_force">[('state', 'in', ['confirmed', 'done', 'cancel'])]</field>
+    <field name="groups" eval="[(4, ref('group_library_user'))]"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+
+  <!-- Los gestores ven todos los pedidos sin restricción (dominio siempre verdadero).
+       Como los gestores también heredan group_library_user, sus dos reglas se combinan
+       con OR: (estado restringido) OR (todos) = todos. -->
+  <record id="rule_library_order_manager" model="ir.rule">
+    <field name="name">Pedidos: gestores ven todos</field>
+    <field name="model_id" ref="model_library_order"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+    <field name="groups" eval="[(4, ref('group_library_manager'))]"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
 </odoo>

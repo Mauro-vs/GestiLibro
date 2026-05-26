@@ -18,6 +18,7 @@
         'views/library_publisher_views.xml',
         'views/library_store_views.xml',
         'views/library_order_views.xml',
+        'views/library_account_move_views.xml',
         'views/library_menu.xml',
     ],
     'application': True,

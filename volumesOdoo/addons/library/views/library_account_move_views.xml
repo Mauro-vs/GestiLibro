@@ -1,0 +1,25 @@
+<odoo>
+  <!-- Herencia del formulario de account.move para mostrar el pedido GestiLibros -->
+  <record id="view_account_move_form_library_inherit" model="ir.ui.view">
+    <field name="name">account.move.form.library.inherit</field>
+    <field name="model">account.move</field>
+    <field name="inherit_id" ref="account.view_move_form"/>
+    <field name="arch" type="xml">
+
+      <!-- Botón stat en la cabecera para navegar directamente al pedido de origen -->
+      <xpath expr="//div[@name='button_box']" position="inside">
+        <button name="action_view_library_order" type="object"
+                class="oe_stat_button" icon="fa-book"
+                invisible="not library_order_id">
+          <div class="o_stat_info">
+            <span class="o_stat_text">Pedido</span>
+            <span class="o_stat_value">
+              <field name="library_order_id"/>
+            </span>
+          </div>
+        </button>
+      </xpath>
+
+    </field>
+  </record>
+</odoo>

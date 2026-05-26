@@ -91,10 +91,37 @@
     </field>
   </record>
 
+  <!-- Vista calendar: muestra ventas en un calendario mensual por fecha -->
+  <record id="view_library_order_calendar" model="ir.ui.view">
+    <field name="name">library.order.calendar</field>
+    <field name="model">library.order</field>
+    <field name="arch" type="xml">
+      <calendar string="Ventas" date_start="date" color="store_id" mode="month">
+        <field name="name"/>
+        <field name="client_id"/>
+        <field name="amount_total"/>
+      </calendar>
+    </field>
+  </record>
+
+  <!-- Vista pivot: análisis de ventas por tienda y período -->
+  <record id="view_library_order_pivot" model="ir.ui.view">
+    <field name="name">library.order.pivot</field>
+    <field name="model">library.order</field>
+    <field name="arch" type="xml">
+      <pivot string="Análisis de Ventas">
+        <field name="store_id" type="row"/>
+        <field name="date" interval="month" type="row"/>
+        <field name="state" type="col"/>
+        <field name="amount_total" type="measure"/>
+      </pivot>
+    </field>
+  </record>
+
   <record id="action_library_order" model="ir.actions.act_window">
     <field name="name">Ventas</field>
     <field name="res_model">library.order</field>
-    <field name="view_mode">list,form</field>
+    <field name="view_mode">list,form,calendar,pivot</field>
     <field name="search_view_id" ref="view_library_order_search"/>
   </record>
 </odoo>

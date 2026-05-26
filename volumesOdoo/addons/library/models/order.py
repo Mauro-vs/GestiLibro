@@ -110,8 +110,9 @@ class LibraryOrder(models.Model):
             'invoice_date': fields.Date.today(),
             'currency_id': self.currency_id.id,
             'invoice_line_ids': move_lines,
-            # Referencia al pedido para trazabilidad
             'ref': self.name if self.name != 'New' else False,
+            # Enlace inverso al pedido (herencia account.move)
+            'library_order_id': self.id,
         })
         return invoice
 
