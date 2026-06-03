@@ -222,16 +222,23 @@
     padding: 1.5px 7px; border-radius: 5px; font-size: .83em; white-space: nowrap;
   }
   td code { white-space: normal; }
+  /* block code inside <pre> must NOT inherit inline-code chrome or nowrap */
+  pre code, pre .card code, .card pre code {
+    background: none !important; color: inherit !important;
+    padding: 0 !important; border-radius: 0 !important;
+    font-size: 1em !important; white-space: pre !important;
+    font-family: inherit !important;
+  }
 
   /* ──── BLOQUE CÓDIGO ──── */
   pre {
     background: var(--ink); color: #d6e8e2;
     border: 1px solid var(--ink-3);
     border-radius: 11px; padding: 22px 24px; overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
     font-size: .82rem; line-height: 1.65; margin: 16px 0;
-    position: relative;
+    position: relative; white-space: pre; tab-size: 2;
   }
-  pre code { background: none; color: inherit; padding: 0; white-space: pre; }
   pre .kw  { color: #f4b860; }
   pre .str { color: #7ee2b8; }
   pre .cm  { color: #5e8378; font-style: italic; }
@@ -242,10 +249,12 @@
   /* ──── ÁRBOL ──── */
   .tree {
     background: var(--ink); color: #cfe3dc;
-    border-radius: 12px; padding: 24px 26px;
-    font-family: 'JetBrains Mono', monospace; font-size: .8rem; line-height: 1.95;
+    border-radius: 12px; padding: 22px 24px; margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace; font-size: .8rem; line-height: 1.5;
     overflow-x: auto; border: 1px solid var(--ink-3);
+    white-space: pre; tab-size: 2;
   }
+  @media (max-width: 600px){ .tree { font-size: .68rem; } }
   .tree .dir { color: #9ecbff; font-weight: 700; }
   .tree .py  { color: #7ee2b8; }
   .tree .xml { color: #f4b860; }
@@ -332,6 +341,18 @@
   .vstep .d { font-size: .87rem; color: var(--text-soft); }
 
   /* ──── RELACIONES ──── */
+  /* ──── DIAGRAMA ER (SVG) ──── */
+  .er-legend { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 16px; font-size: .82rem; color: var(--text-soft); font-weight: 600; }
+  .er-legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .er-legend .sw { width: 22px; height: 4px; border-radius: 2px; display: inline-block; }
+  .er-legend .sw.teal { background: var(--teal); }
+  .er-legend .sw.em   { background: var(--emerald-d); }
+  .er-legend .sw.plum { background: var(--plum); }
+  .er-scroll { overflow-x: auto; background: var(--ink); border: 1px solid var(--ink-3); border-radius: 12px; padding: 16px; }
+  .er-svg { display: block; width: 100%; min-width: 680px; height: auto; }
+  .rel-cap { font-size: .85rem; color: var(--text-soft); margin: 14px 0 4px; }
+  .rel-cap strong { color: var(--text); }
+
   .rel { display: flex; align-items: flex-start; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line); font-size: .9rem; }
   .rel:first-of-type { border-top: none; }
   .rel-tag {
@@ -474,8 +495,7 @@
 
   <div class="card">
     <h3>Árbol de directorios</h3>
-    <div class="tree">
-<span class="dir">GestiLibro/</span>                       <span class="cm"># raíz del repositorio</span>
+    <pre class="tree"><span class="dir">GestiLibro/</span>                       <span class="cm"># raíz del repositorio</span>
 ├── <span class="yml">docker-compose.yml</span>           <span class="cm"># servicios Odoo 18 + PostgreSQL 15</span>
 ├── <span class="md">README.md</span>
 ├── GestiLib.png                <span class="cm"># logotipo del proyecto</span>
@@ -511,8 +531,7 @@
     │           ├── <span class="xml">library_sequence.xml</span>  <span class="cm"># secuencia ORD/AAAA/XXXX</span>
     │           └── <span class="xml">library_data.xml</span>      <span class="cm"># 81 registros demo</span>
     ├── <span class="dir">dataOdoo/</span>               <span class="cm"># volumen persistente Odoo (git-ignored)</span>
-    └── <span class="dir">dataPostgreSQL/</span>         <span class="cm"># volumen persistente BD  (git-ignored)</span>
-    </div>
+    └── <span class="dir">dataPostgreSQL/</span>         <span class="cm"># volumen persistente BD  (git-ignored)</span></pre>
   </div>
 
   <div class="note">
@@ -1172,41 +1191,114 @@
     <div><span class="kicker">Modelo entidad-relación</span><h2>Diagrama de relaciones</h2></div>
   </div>
 
-  <p class="lead">Las relaciones son las de cualquier base de datos relacional, declaradas en Python como campos Odoo.</p>
-  <div class="chips" style="margin-bottom:18px">
-    <span class="chip" style="background:rgba(23,143,143,.12);color:var(--teal);border-color:rgba(23,143,143,.3)">Many2one = clave foránea (columna)</span>
-    <span class="chip e">One2many = inversa virtual (sin columna)</span>
-    <span class="chip p">Many2many = tabla intermedia</span>
-  </div>
+  <p class="lead">Las relaciones son las de cualquier base de datos relacional, declaradas en Python como campos Odoo. El siguiente diagrama muestra las diez relaciones del módulo.</p>
 
   <div class="card">
-<pre style="font-size:.78rem"><code>  ┌──────────────────┐        ┌──────────────────┐
-  │  library.author  │◄──M2M──►│  library.book    │◄──M2O──┐
-  └──────────────────┘        └────────┬─────────┘        │
-   (library_book_author_rel)           │ O2M               │
-                                       ▼                   │
-                              ┌──────────────────┐  ┌──────────────────┐
-                              │  library.stock   │  │ library.publisher│
-                              │  (book × store)  │  └──────────────────┘
-                              └────────┬─────────┘   (book.publisher_id)
-                                       │ M2O
-                                       ▼
-                              ┌──────────────────┐
-                              │  library.store   │
-                              └────────┬─────────┘
-                                       │ O2M
-                              ┌──────────────────┐       ┌──────────────┐
-                              │  library.order   │◄──M2O──│  res.partner │
-                              └────────┬─────────┘        │   (cliente)  │
-                                       │ O2M              └──────────────┘
-                                       ▼
-                              ┌──────────────────┐
-                              │ library.order    │───M2O──►  library.book
-                              │      .line        │
-                              └──────────────────┘
+    <div class="er-legend">
+      <span><i class="sw teal"></i>Many2one (FK)</span>
+      <span><i class="sw em"></i>One2many</span>
+      <span><i class="sw plum"></i>Many2many</span>
+    </div>
+    <div class="er-scroll">
+    <svg class="er-svg" viewBox="0 0 860 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama entidad-relación de GestiLibros">
+      <defs>
+        <marker id="aTeal" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#178f8f"/></marker>
+        <marker id="aEm" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0c6b4a"/></marker>
+        <marker id="aPlum" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7d4a8c"/></marker>
+        <marker id="aPlumS" markerWidth="9" markerHeight="9" refX="2" refY="3" orient="auto"><path d="M7,0 L0,3 L7,6 Z" fill="#7d4a8c"/></marker>
+        <style>
+          .ent rect{rx:9;fill:#16302b;stroke:#1f9e6f;stroke-width:1.4;}
+          .ent.inh rect{stroke:#e0922f;stroke-dasharray:5 3;}
+          .ent text{fill:#f6f4ec;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;}
+          .ent .sub{fill:#57c79b;font-size:10.5px;font-weight:400;}
+          .edge{fill:none;stroke-width:1.8;}
+          .e-teal{stroke:#178f8f;} .e-em{stroke:#0c6b4a;} .e-plum{stroke:#7d4a8c;}
+          .lbl{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;}
+          .l-teal{fill:#0f6b6b;} .l-em{fill:#0c6b4a;} .l-plum{fill:#6b3d79;}
+          .lbl-bg{fill:#f6f4ec;}
+          .rel-note{font-family:'Inter Tight',sans-serif;font-size:10px;fill:#7d8c87;font-style:italic;}
+        </style>
+      </defs>
 
-  library.order  ──M2O──►  account.move
-  account.move   ──M2O──►  library.order   (inverso: library_order_id)</code></pre>
+      <!-- ===== EDGES (draw first, under boxes) ===== -->
+      <!-- author M2M book (top row, horizontal) -->
+      <path class="edge e-plum" d="M188,86 H236" marker-end="url(#aPlum)" marker-start="url(#aPlumS)"/>
+      <rect class="lbl-bg" x="195" y="79" width="34" height="14"/><text class="lbl l-plum" x="199" y="89">M2M</text>
+
+      <!-- book.publisher_id : book -> publisher (M2O), top row horizontal -->
+      <path class="edge e-teal" d="M624,86 H396" marker-end="url(#aTeal)"/>
+      <rect class="lbl-bg" x="492" y="79" width="34" height="14"/><text class="lbl l-teal" x="496" y="89">M2O</text>
+
+      <!-- stock.book_id : stock -> book (M2O). up from stock, jog right into book bottom -->
+      <path class="edge e-teal" d="M150,200 V150 H300 V112" marker-end="url(#aTeal)"/>
+      <rect class="lbl-bg" x="158" y="157" width="34" height="14"/><text class="lbl l-teal" x="162" y="167">M2O</text>
+
+      <!-- stock.store_id : stock -> store (M2O) -->
+      <path class="edge e-teal" d="M150,318 V252" marker-end="url(#aTeal)"/>
+      <rect class="lbl-bg" x="158" y="278" width="34" height="14"/><text class="lbl l-teal" x="162" y="288">M2O</text>
+
+      <!-- order.store_id : order -> store (M2O). up-left from order to store bottom -->
+      <path class="edge e-teal" d="M260,436 V400 H150 V370" marker-end="url(#aTeal)"/>
+      <rect class="lbl-bg" x="158" y="393" width="34" height="14"/><text class="lbl l-teal" x="162" y="403">M2O</text>
+
+      <!-- order.client_id : order -> res.partner (M2O), horizontal -->
+      <path class="edge e-teal" d="M624,462 H392" marker-end="url(#aTeal)"/>
+      <rect class="lbl-bg" x="492" y="455" width="34" height="14"/><text class="lbl l-teal" x="496" y="465">M2O</text>
+
+      <!-- order.line.order_id : line -> order (M2O), short up jog -->
+      <path class="edge e-teal" d="M255,494 V488" marker-end="url(#aTeal)"/>
+
+      <!-- order.line.book_id : line -> book (M2O). right then up the right side into book -->
+      <path class="edge e-teal" d="M280,520 H418 Q448,520 448,490 L448,150 Q448,112 396,100" marker-end="url(#aTeal)"/>
+      <rect class="lbl-bg" x="431" y="240" width="34" height="14"/><text class="lbl l-teal" x="435" y="250">M2O</text>
+
+      <!-- order.invoice_id : order -> account.move (M2O), upper line -->
+      <path class="edge e-teal" d="M392,390 H470" marker-end="url(#aTeal)"/>
+      <rect class="lbl-bg" x="414" y="370" width="34" height="14"/><text class="lbl l-teal" x="418" y="380">M2O</text>
+
+      <!-- account.move.library_order_id : move -> order (M2O inverse), lower dashed line -->
+      <path class="edge e-teal" d="M470,414 H392" marker-end="url(#aTeal)" stroke-dasharray="4 3"/>
+
+      <!-- ===== ENTITIES ===== -->
+      <!-- book (top center-left) -->
+      <g class="ent"><rect x="236" y="60" width="160" height="52"/>
+        <text x="316" y="84" text-anchor="middle">library.book</text>
+        <text x="316" y="100" text-anchor="middle" class="sub">catálogo</text></g>
+      <!-- author (top left) -->
+      <g class="ent"><rect x="40" y="60" width="148" height="52"/>
+        <text x="114" y="84" text-anchor="middle">library.author</text>
+        <text x="114" y="100" text-anchor="middle" class="sub">autores</text></g>
+      <!-- publisher (top right) -->
+      <g class="ent"><rect x="624" y="60" width="172" height="52"/>
+        <text x="710" y="84" text-anchor="middle">library.publisher</text>
+        <text x="710" y="100" text-anchor="middle" class="sub">editoriales</text></g>
+      <!-- stock (row2 left) -->
+      <g class="ent"><rect x="70" y="200" width="160" height="52"/>
+        <text x="150" y="224" text-anchor="middle">library.stock</text>
+        <text x="150" y="240" text-anchor="middle" class="sub">book × store</text></g>
+      <!-- store (row3 left) -->
+      <g class="ent"><rect x="70" y="318" width="160" height="52"/>
+        <text x="150" y="342" text-anchor="middle">library.store</text>
+        <text x="150" y="358" text-anchor="middle" class="sub">tiendas</text></g>
+      <!-- order (row4 center-left) -->
+      <g class="ent"><rect x="232" y="436" width="160" height="52"/>
+        <text x="312" y="460" text-anchor="middle">library.order</text>
+        <text x="312" y="476" text-anchor="middle" class="sub">ventas</text></g>
+      <!-- order.line (row4 left) -->
+      <g class="ent"><rect x="120" y="494" width="160" height="52"/>
+        <text x="200" y="518" text-anchor="middle">library.order.line</text>
+        <text x="200" y="534" text-anchor="middle" class="sub">líneas</text></g>
+      <!-- res.partner (right, herencia) -->
+      <g class="ent inh"><rect x="624" y="436" width="172" height="52"/>
+        <text x="710" y="460" text-anchor="middle">res.partner</text>
+        <text x="710" y="476" text-anchor="middle" class="sub">cliente · herencia</text></g>
+      <!-- account.move (right center, herencia) -->
+      <g class="ent inh"><rect x="470" y="374" width="172" height="52"/>
+        <text x="556" y="398" text-anchor="middle">account.move</text>
+        <text x="556" y="414" text-anchor="middle" class="sub">factura · herencia</text></g>
+    </svg>
+    </div>
+    <p class="rel-cap">Las cajas con borde ámbar discontinuo son <strong>herencias</strong> de modelos nativos de Odoo. La flecha discontinua entre factura y pedido es el enlace inverso <code>library_order_id</code>.</p>
 
     <h4>Relaciones detalladas</h4>
     <div class="rel"><span class="rel-tag m2m">M2M</span><div><strong>book ↔ author</strong> — un libro puede tener varios autores y un autor varios libros. Tabla <code>library_book_author_rel</code>.</div></div>
