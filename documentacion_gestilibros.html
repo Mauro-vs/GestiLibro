@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GestiLibros — Documentación Técnica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* === NUEVA PALETA: tinta + esmeralda + ámbar === */
+    --ink:        #0f1c1a;   /* fondo profundo verde-tinta */
+    --ink-2:      #16302b;
+    --ink-3:      #1d3f38;
+    --paper:      #f6f4ec;   /* "papel" cálido */
+    --paper-2:    #fffdf7;
+    --emerald:    #1f9e6f;
+    --emerald-d:  #0c6b4a;
+    --emerald-l:  #57c79b;
+    --amber:      #e0922f;
+    --amber-l:    #f4b860;
+    --amber-soft: #fbeed7;
+    --rust:       #c0492f;
+    --plum:       #7d4a8c;
+    --teal:       #178f8f;
+    --text:       #1b2a27;
+    --text-soft:  #4f635e;
+    --line:       #e2ddcf;
+    --shadow:     0 1px 2px rgba(15,28,26,.05), 0 8px 28px rgba(15,28,26,.08);
+    --shadow-lg:  0 4px 12px rgba(15,28,26,.10), 0 24px 60px rgba(15,28,26,.16);
+    --radius:     14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    background: var(--paper);
+    color: var(--text);
+    line-height: 1.68;
+    font-size: 15.5px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--amber); color: var(--ink); }
+
+  code, pre, .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ════════════ PORTADA ════════════ */
+  .portada {
+    position: relative;
+    background:
+      radial-gradient(1200px 500px at 80% -10%, rgba(31,158,111,.35), transparent 60%),
+      radial-gradient(900px 500px at 5% 110%, rgba(224,146,47,.22), transparent 55%),
+      linear-gradient(160deg, var(--ink) 0%, var(--ink-2) 70%, var(--ink-3) 100%);
+    color: var(--paper);
+    padding: 92px 8vw 84px;
+    overflow: hidden;
+    border-bottom: 3px solid var(--amber);
+  }
+  /* lomos de libros decorativos */
+  .portada .spines {
+    position: absolute; inset: 0; opacity: .12; pointer-events: none;
+    background-image: repeating-linear-gradient(90deg,
+      transparent 0 38px, rgba(255,255,255,.5) 38px 40px,
+      transparent 40px 70px, rgba(255,255,255,.25) 70px 72px);
+    mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+  }
+  .portada .grain {
+    position: absolute; inset: 0; pointer-events: none; opacity: .5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  }
+  .portada-inner { position: relative; max-width: 1080px; margin: 0 auto; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: .74rem; letter-spacing: .28em; text-transform: uppercase;
+    color: var(--emerald-l); font-weight: 600; margin-bottom: 26px;
+  }
+  .eyebrow::before { content:''; width: 34px; height: 1px; background: var(--emerald-l); }
+  .portada h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(3.4rem, 9vw, 6.2rem);
+    line-height: .92;
+    letter-spacing: -.02em;
+    margin-bottom: 8px;
+  }
+  .portada h1 .dot { color: var(--amber); }
+  .portada .lede {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 500;
+    font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+    color: rgba(246,244,236,.78);
+    max-width: 640px; margin: 18px 0 38px;
+  }
+  .badges { display: flex; gap: 10px; flex-wrap: wrap; }
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(87,199,155,.4);
+    color: var(--emerald-l);
+    padding: 6px 14px; border-radius: 8px;
+    font-size: .76rem; font-weight: 500; letter-spacing: .02em;
+  }
+  .badge.amber { border-color: rgba(244,184,96,.45); color: var(--amber-l); }
+
+  /* ════════════ NAV PEGAJOSA ════════════ */
+  .toc {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(246,244,236,.86);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .toc-inner {
+    max-width: 1180px; margin: 0 auto; padding: 12px 40px;
+    display: flex; align-items: center; gap: 20px; overflow-x: auto;
+  }
+  .toc-brand {
+    font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.05rem;
+    color: var(--emerald-d); white-space: nowrap; padding-right: 14px;
+    border-right: 1px solid var(--line);
+  }
+  .toc-brand .dot { color: var(--amber); }
+  .toc a {
+    font-size: .82rem; color: var(--text-soft); text-decoration: none;
+    white-space: nowrap; font-weight: 500; padding: 4px 2px;
+    border-bottom: 2px solid transparent; transition: .18s;
+  }
+  .toc a:hover { color: var(--emerald-d); border-bottom-color: var(--amber); }
+  .toc::-webkit-scrollbar { height: 0; }
+
+  /* ════════════ CONTENIDO ════════════ */
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 70px 40px 40px; }
+
+  section { margin-bottom: 78px; scroll-margin-top: 70px; }
+
+  .sec-head {
+    display: flex; align-items: baseline; gap: 18px; margin-bottom: 34px;
+    position: relative;
+  }
+  .sec-num {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: 3.4rem; line-height: 1; color: var(--line);
+    -webkit-text-stroke: 1px var(--emerald);
+    color: transparent; flex-shrink: 0;
+  }
+  .sec-head h2 {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: clamp(1.6rem, 3.6vw, 2.2rem);
+    color: var(--ink); letter-spacing: -.01em; line-height: 1.12;
+  }
+  .sec-head .kicker {
+    display: block; font-family: 'Inter Tight', sans-serif;
+    font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--amber); font-weight: 700; margin-bottom: 4px;
+  }
+  .sec-head::after {
+    content:''; position:absolute; left: 0; bottom: -14px;
+    width: 64px; height: 3px; background: var(--amber); border-radius: 2px;
+  }
+
+  .lead { font-size: 1.08rem; color: var(--text-soft); max-width: 70ch; margin-bottom: 24px; }
+
+  /* ──── TARJETAS ──── */
+  .card {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px 30px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow);
+    position: relative;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .card::before {
+    content:''; position: absolute; left: 0; top: 22px; bottom: 22px;
+    width: 3px; border-radius: 3px; background: var(--emerald);
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .card.amber::before { background: var(--amber); }
+  .card.rust::before  { background: var(--rust); }
+  .card.plum::before  { background: var(--plum); }
+  .card.teal::before  { background: var(--teal); }
+
+  .card h3 {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 1.22rem; color: var(--ink); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .card h4 {
+    font-size: .76rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--emerald-d); font-weight: 700; margin: 22px 0 10px;
+  }
+  .card p { color: var(--text-soft); margin-bottom: 10px; }
+  .card p:last-child { margin-bottom: 0; }
+  .card strong { color: var(--text); font-weight: 600; }
+
+  .model-tag {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--ink); color: var(--emerald-l);
+    font-size: .72rem; padding: 3px 10px; border-radius: 7px; font-weight: 500;
+  }
+
+  /* ──── TABLAS ──── */
+  .tbl-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--line); }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; background: var(--paper-2); }
+  thead th {
+    background: var(--ink); color: var(--paper);
+    text-align: left; padding: 11px 16px; font-weight: 600;
+    font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  thead th.amber-h { background: var(--amber-d, #b9741f); }
+  tbody td { padding: 10px 16px; border-top: 1px solid var(--line); color: var(--text); vertical-align: top; }
+  tbody tr:nth-child(even) { background: rgba(15,28,26,.022); }
+  tbody tr:hover { background: rgba(31,158,111,.07); }
+  td code, p code, li code, .card code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--amber-soft); color: #8a5414;
+    padding: 1.5px 7px; border-radius: 5px; font-size: .83em; white-space: nowrap;
+  }
+  td code { white-space: normal; }
+
+  /* ──── BLOQUE CÓDIGO ──── */
+  pre {
+    background: var(--ink); color: #d6e8e2;
+    border: 1px solid var(--ink-3);
+    border-radius: 11px; padding: 22px 24px; overflow-x: auto;
+    font-size: .82rem; line-height: 1.65; margin: 16px 0;
+    position: relative;
+  }
+  pre code { background: none; color: inherit; padding: 0; white-space: pre; }
+  pre .kw  { color: #f4b860; }
+  pre .str { color: #7ee2b8; }
+  pre .cm  { color: #5e8378; font-style: italic; }
+  pre .fn  { color: #9ecbff; }
+  pre .num { color: #f4b860; }
+  pre .pun { color: #8fb3aa; }
+
+  /* ──── ÁRBOL ──── */
+  .tree {
+    background: var(--ink); color: #cfe3dc;
+    border-radius: 12px; padding: 24px 26px;
+    font-family: 'JetBrains Mono', monospace; font-size: .8rem; line-height: 1.95;
+    overflow-x: auto; border: 1px solid var(--ink-3);
+  }
+  .tree .dir { color: #9ecbff; font-weight: 700; }
+  .tree .py  { color: #7ee2b8; }
+  .tree .xml { color: #f4b860; }
+  .tree .csv { color: #f08d6b; }
+  .tree .yml { color: #66d9d9; }
+  .tree .md  { color: #c89cd6; }
+  .tree .cm  { color: #5e8378; font-style: italic; }
+
+  /* ──── CHIPS ──── */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .chip {
+    font-size: .78rem; font-weight: 600; padding: 4px 12px; border-radius: 20px;
+    border: 1px solid transparent;
+  }
+  .chip.e { background: rgba(31,158,111,.12); color: var(--emerald-d); border-color: rgba(31,158,111,.3); }
+  .chip.a { background: var(--amber-soft); color: #8a5414; border-color: rgba(224,146,47,.35); }
+  .chip.r { background: rgba(192,73,47,.1); color: var(--rust); border-color: rgba(192,73,47,.3); }
+  .chip.p { background: rgba(125,74,140,.1); color: var(--plum); border-color: rgba(125,74,140,.3); }
+  .chip.n { background: rgba(15,28,26,.05); color: var(--text-soft); border-color: var(--line); }
+
+  /* ──── CALLOUTS ──── */
+  .note, .warn {
+    border-radius: 0 11px 11px 0; padding: 15px 20px 15px 18px;
+    margin: 16px 0; font-size: .9rem; border-left: 4px solid;
+    display: flex; gap: 12px;
+  }
+  .note { background: rgba(31,158,111,.07); border-color: var(--emerald); color: #18483a; }
+  .warn { background: var(--amber-soft); border-color: var(--amber); color: #7a4a10; }
+  .note .ic, .warn .ic { font-size: 1.05rem; line-height: 1.5; }
+  .note strong { color: var(--emerald-d); }
+  .warn strong { color: #8a5414; }
+
+  /* ──── GRID ──── */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  @media (max-width: 760px) { .g2, .g3 { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: linear-gradient(165deg, var(--paper-2), #f0ede2);
+    border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px;
+  }
+  .panel h4 { margin-top: 0; }
+
+  /* ──── MÉTRICAS ──── */
+  .stat {
+    background: var(--paper-2); border: 1px solid var(--line);
+    border-radius: 12px; padding: 20px; text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .stat .big {
+    font-family: 'Fraunces', serif; font-weight: 900; font-size: 2.6rem;
+    color: var(--emerald-d); line-height: 1;
+  }
+  .stat .lbl { font-size: .8rem; color: var(--text-soft); margin-top: 6px; }
+
+  /* ──── FLUJO ──── */
+  .flow { display: flex; align-items: stretch; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
+  .step {
+    flex: 1 1 130px; min-width: 130px;
+    background: var(--ink); color: var(--paper);
+    border-radius: 10px; padding: 12px 14px; text-align: center;
+    position: relative;
+  }
+  .step .t { font-weight: 600; font-size: .86rem; }
+  .step .s { font-family: 'JetBrains Mono', monospace; font-size: .68rem; opacity: .65; }
+  .step.e { background: var(--emerald-d); }
+  .step.a { background: var(--amber); color: var(--ink); }
+  .step.a .s { opacity:.6; }
+  .step.r { background: var(--rust); }
+  .flow .arrow { align-self: center; color: var(--emerald); font-weight: 800; font-size: 1.3rem; }
+
+  /* vertical flow */
+  .vflow { display: flex; flex-direction: column; gap: 10px; margin: 18px 0; }
+  .vstep {
+    display: grid; grid-template-columns: 200px 1fr; gap: 14px; align-items: center;
+  }
+  @media (max-width: 620px){ .vstep { grid-template-columns: 1fr; gap: 4px; } }
+  .vstep .pill {
+    background: var(--ink); color: var(--paper);
+    border-radius: 9px; padding: 9px 14px; font-weight: 600; font-size: .85rem; text-align: center;
+  }
+  .vstep .pill.e { background: var(--emerald-d); }
+  .vstep .pill.a { background: var(--amber); color: var(--ink); }
+  .vstep .d { font-size: .87rem; color: var(--text-soft); }
+
+  /* ──── RELACIONES ──── */
+  .rel { display: flex; align-items: flex-start; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line); font-size: .9rem; }
+  .rel:first-of-type { border-top: none; }
+  .rel-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: .7rem; font-weight: 700;
+    color: #fff; padding: 3px 8px; border-radius: 7px; white-space: nowrap; flex-shrink: 0;
+  }
+  .rel-tag.m2o { background: var(--teal); }
+  .rel-tag.o2m { background: var(--emerald-d); }
+  .rel-tag.m2m { background: var(--plum); }
+
+  /* ──── PERMISOS ──── */
+  .yes { color: var(--emerald); font-weight: 800; }
+  .no  { color: #c9c3b3; font-weight: 800; }
+
+  ul.list { padding-left: 4px; margin: 10px 0; list-style: none; }
+  ul.list li { position: relative; padding-left: 22px; margin-bottom: 8px; color: var(--text-soft); }
+  ul.list li::before {
+    content:'▸'; position: absolute; left: 0; top: 0; color: var(--amber); font-weight: 700;
+  }
+  ul.list li strong { color: var(--text); }
+
+  /* ──── SEPARADOR ──── */
+  .rule { display: flex; align-items: center; gap: 16px; margin: 60px 0; }
+  .rule::before, .rule::after { content:''; flex: 1; height: 1px; background: var(--line); }
+  .rule .o { font-family:'Fraunces',serif; font-style: italic; color: var(--amber); font-size: 1.1rem; }
+
+  /* ──── FOOTER ──── */
+  footer {
+    background:
+      radial-gradient(700px 300px at 100% 0%, rgba(31,158,111,.25), transparent 60%),
+      var(--ink);
+    color: rgba(246,244,236,.7);
+    padding: 48px 40px; margin-top: 40px;
+    border-top: 3px solid var(--amber);
+  }
+  .foot-inner { max-width: 1080px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; }
+  footer .ttl { font-family:'Fraunces',serif; font-weight:900; font-size:1.8rem; color: var(--paper); }
+  footer .ttl .dot { color: var(--amber); }
+  footer .meta { font-size: .82rem; line-height: 1.8; }
+  footer a { color: var(--emerald-l); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* fade-in on load */
+  @keyframes rise { from { opacity:0; transform: translateY(16px);} to {opacity:1; transform:none;} }
+  .wrap section { animation: rise .6s both; }
+</style>
+</head>
+<body>
+
+<!-- ════════════ PORTADA ════════════ -->
+<header class="portada">
+  <span class="spines"></span>
+  <span class="grain"></span>
+  <div class="portada-inner">
+    <span class="eyebrow">Documentación técnica · Módulo Odoo</span>
+    <h1>GestiLibros<span class="dot">.</span></h1>
+    <p class="lede">Gestión integral de una red de librerías: catálogo, autores y editoriales, stock por tienda, ventas y facturación automática — construido sobre el núcleo de Odoo.</p>
+    <div class="badges">
+      <span class="badge">Odoo 18</span>
+      <span class="badge">Python 3.12</span>
+      <span class="badge">PostgreSQL 15</span>
+      <span class="badge amber">Docker Compose v2</span>
+      <span class="badge amber">v1.0.0</span>
+      <span class="badge amber">Autor · Mauro</span>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════ NAV ════════════ -->
+<nav class="toc">
+  <div class="toc-inner">
+    <span class="toc-brand">GL<span class="dot">.</span></span>
+    <a href="#s1">Introducción</a>
+    <a href="#s2">Estructura</a>
+    <a href="#s3">Manifiesto</a>
+    <a href="#s4">Modelos</a>
+    <a href="#s5">Vistas</a>
+    <a href="#s6">Seguridad</a>
+    <a href="#s7">Datos</a>
+    <a href="#s8">Flujos</a>
+    <a href="#s9">Relaciones</a>
+    <a href="#s10">Docker</a>
+    <a href="#s11">Versiones</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ════════════ 1 · INTRODUCCIÓN ════════════ -->
+<section id="s1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <div><span class="kicker">El proyecto</span><h2>Introducción y objetivos</h2></div>
+  </div>
+
+  <p class="lead">GestiLibros es un módulo personalizado para <strong>Odoo 18</strong> que cubre el ciclo completo de una cadena de librerías. Internamente el módulo se llama <code>library</code>; comercialmente, <em>GestiLibros</em>.</p>
+
+  <div class="card">
+    <h3>¿Qué resuelve?</h3>
+    <p>Modela el catálogo editorial (libros, autores, editoriales), controla el stock de forma independiente por cada tienda, gestiona el proceso de venta con validación y descuento de inventario, y genera facturas de cliente de forma automática enlazándose con el módulo de Contabilidad.</p>
+    <p>En lugar de reinventar la rueda, <strong>extiende dos modelos nativos de Odoo</strong> mediante herencia: <code>res.partner</code> (para convertir contactos en clientes de la librería) y <code>account.move</code> (para vincular cada factura con su pedido de origen). Así, los clientes y facturas de GestiLibros siguen siendo objetos Odoo de pleno derecho, compatibles con el resto del sistema.</p>
+  </div>
+
+  <div class="g2">
+    <div class="card amber">
+      <h3>Objetivos técnicos</h3>
+      <ul class="list">
+        <li>Diseñar un <strong>modelo relacional completo</strong> con restricciones de integridad a nivel SQL.</li>
+        <li>Implementar lógica de negocio en Python: campos calculados (<code>@api.depends</code>), validaciones (<code>@api.constrains</code>) y autocompletado (<code>@api.onchange</code>).</li>
+        <li>Aplicar <strong>herencia de modelos y de vistas</strong> para ampliar funcionalidad nativa sin romperla.</li>
+        <li>Configurar seguridad en dos capas: permisos de objeto y reglas de registro.</li>
+        <li>Integrar la <strong>facturación automática</strong> con el módulo <code>account</code>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Funcionalidades</h3>
+      <ul class="list">
+        <li>Catálogo con portada, ISBN, género, descripción y precios.</li>
+        <li>Autores (muchos-a-muchos) y editoriales relacionadas.</li>
+        <li>Stock multi-tienda con cantidad mínima de reposición.</li>
+        <li>Ventas con validación de stock por tienda y numeración secuencial.</li>
+        <li>Factura de cliente generada al confirmar el pedido.</li>
+        <li>Clientes con código único, género favorito y puntos de fidelidad.</li>
+        <li>Vistas kanban, calendario y pivot para explorar y analizar.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="rule"><span class="o">❦</span></div>
+
+<!-- ════════════ 2 · ESTRUCTURA ════════════ -->
+<section id="s2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <div><span class="kicker">Disposición de archivos</span><h2>Estructura del proyecto</h2></div>
+  </div>
+
+  <p class="lead">El proyecto sigue la convención de módulos Odoo. El código vive en <code>volumesOdoo/addons/library/</code>, ruta que Docker monta como directorio de addons extra del contenedor.</p>
+
+  <div class="card">
+    <h3>Árbol de directorios</h3>
+    <div class="tree">
+<span class="dir">GestiLibro/</span>                       <span class="cm"># raíz del repositorio</span>
+├── <span class="yml">docker-compose.yml</span>           <span class="cm"># servicios Odoo 18 + PostgreSQL 15</span>
+├── <span class="md">README.md</span>
+├── GestiLib.png                <span class="cm"># logotipo del proyecto</span>
+└── <span class="dir">volumesOdoo/</span>
+    ├── <span class="dir">addons/</span>
+    │   └── <span class="dir">library/</span>             <span class="cm"># ← el módulo Odoo</span>
+    │       ├── <span class="py">__manifest__.py</span>    <span class="cm"># metadatos, dependencias, orden de carga</span>
+    │       ├── <span class="py">__init__.py</span>        <span class="cm"># importa el paquete models</span>
+    │       ├── <span class="md">README.md</span>
+    │       ├── <span class="dir">models/</span>            <span class="cm"># lógica de negocio (8 archivos)</span>
+    │       │   ├── <span class="py">__init__.py</span>
+    │       │   ├── <span class="py">book.py</span>        <span class="cm"># library.book</span>
+    │       │   ├── <span class="py">author.py</span>      <span class="cm"># library.author</span>
+    │       │   ├── <span class="py">publisher.py</span>   <span class="cm"># library.publisher</span>
+    │       │   ├── <span class="py">partner.py</span>     <span class="cm"># res.partner  (herencia)</span>
+    │       │   ├── <span class="py">store.py</span>       <span class="cm"># library.store + library.stock</span>
+    │       │   ├── <span class="py">order.py</span>       <span class="cm"># library.order</span>
+    │       │   ├── <span class="py">order_line.py</span>  <span class="cm"># library.order.line</span>
+    │       │   └── <span class="py">account_move.py</span> <span class="cm"># account.move (herencia)</span>
+    │       ├── <span class="dir">views/</span>             <span class="cm"># 8 archivos XML de vistas</span>
+    │       │   ├── <span class="xml">library_book_views.xml</span>
+    │       │   ├── <span class="xml">library_author_views.xml</span>
+    │       │   ├── <span class="xml">library_publisher_views.xml</span>
+    │       │   ├── <span class="xml">library_partner_views.xml</span>
+    │       │   ├── <span class="xml">library_store_views.xml</span>
+    │       │   ├── <span class="xml">library_order_views.xml</span>
+    │       │   ├── <span class="xml">library_account_move_views.xml</span>
+    │       │   └── <span class="xml">library_menu.xml</span>
+    │       ├── <span class="dir">security/</span>
+    │       │   ├── <span class="xml">security.xml</span>          <span class="cm"># grupos + reglas de registro</span>
+    │       │   └── <span class="csv">ir.model.access.csv</span>   <span class="cm"># permisos CRUD por modelo</span>
+    │       └── <span class="dir">data/</span>
+    │           ├── <span class="xml">library_sequence.xml</span>  <span class="cm"># secuencia ORD/AAAA/XXXX</span>
+    │           └── <span class="xml">library_data.xml</span>      <span class="cm"># 81 registros demo</span>
+    ├── <span class="dir">dataOdoo/</span>               <span class="cm"># volumen persistente Odoo (git-ignored)</span>
+    └── <span class="dir">dataPostgreSQL/</span>         <span class="cm"># volumen persistente BD  (git-ignored)</span>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="ic">🧭</span>
+    <div><strong>El orden de carga importa.</strong> En el manifiesto la seguridad se carga <em>antes</em> que las vistas, y el menú va el <em>último</em> porque referencia las acciones que las vistas definen. Alterar este orden provoca errores de "ID externo no encontrado", porque Odoo intentaría referenciar registros que aún no existen.</div>
+  </div>
+</section>
+
+<div class="rule"><span class="o">❦</span></div>
+
+<!-- ════════════ 3 · MANIFIESTO ════════════ -->
+<section id="s3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <div><span class="kicker">Punto de entrada</span><h2>Manifiesto y configuración</h2></div>
+  </div>
+
+  <p class="lead">El <code>__manifest__.py</code> es el archivo que Odoo lee para reconocer el módulo. Sin él, la carpeta <code>library/</code> es invisible. Define metadatos, dependencias y la lista ordenada de archivos a cargar.</p>
+
+  <div class="card">
+    <h3>__manifest__.py</h3>
+<pre><code><span class="pun">{</span>
+    <span class="str">'name'</span>: <span class="str">'GestiLibros'</span><span class="pun">,</span>
+    <span class="str">'version'</span>: <span class="str">'1.0.0'</span><span class="pun">,</span>
+    <span class="str">'summary'</span>: <span class="str">'Gestión de tiendas de libros: catálogo, stock y ventas'</span><span class="pun">,</span>
+    <span class="str">'author'</span>: <span class="str">'Mauro'</span><span class="pun">,</span>
+    <span class="str">'category'</span>: <span class="str">'Gestilibros'</span><span class="pun">,</span>
+    <span class="str">'depends'</span>: <span class="pun">[</span><span class="str">'base'</span><span class="pun">,</span> <span class="str">'account'</span><span class="pun">],</span>   <span class="cm"># account → permite crear facturas (account.move)</span>
+    <span class="str">'data'</span>: <span class="pun">[</span>
+        <span class="str">'security/security.xml'</span><span class="pun">,</span>          <span class="cm"># 1 · grupos y reglas de registro</span>
+        <span class="str">'security/ir.model.access.csv'</span><span class="pun">,</span>   <span class="cm"># 2 · permisos CRUD por modelo</span>
+        <span class="str">'data/library_sequence.xml'</span><span class="pun">,</span>      <span class="cm"># 3 · secuencia numérica</span>
+        <span class="str">'data/library_data.xml'</span><span class="pun">,</span>          <span class="cm"># 4 · datos demo</span>
+        <span class="str">'views/library_partner_views.xml'</span><span class="pun">,</span> <span class="cm"># 5 · herencia de res.partner primero</span>
+        <span class="cm">… resto de vistas …</span>
+        <span class="str">'views/library_menu.xml'</span><span class="pun">,</span>         <span class="cm"># último · el menú referencia las acciones</span>
+    <span class="pun">],</span>
+    <span class="str">'application'</span>: <span class="kw">True</span><span class="pun">,</span>   <span class="cm"># aparece como app en la pantalla de inicio</span>
+<span class="pun">}</span></code></pre>
+
+    <h4>Dependencias</h4>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Dependencia</th><th>Por qué</th><th>Qué aporta</th></tr></thead>
+      <tbody>
+        <tr><td><code>base</code></td><td>Obligatoria en todo módulo</td><td>Acceso a <code>res.partner</code>, <code>res.currency</code>, <code>ir.sequence</code> y al sistema de grupos.</td></tr>
+        <tr><td><code>account</code></td><td>Facturación automática</td><td>Aporta el modelo <code>account.move</code>, que se extiende para enlazar cada factura con su pedido.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>models/__init__.py · Orden de importación</h3>
+    <p>Este archivo señala al ORM qué modelos registrar. El orden de importación replica las dependencias entre clases: primero los modelos base, al final los que los referencian.</p>
+    <div class="chips">
+      <span class="chip e">1 · book</span>
+      <span class="chip e">2 · author</span>
+      <span class="chip e">3 · partner</span>
+      <span class="chip e">4 · store</span>
+      <span class="chip e">5 · publisher</span>
+      <span class="chip e">6 · order</span>
+      <span class="chip e">7 · order_line</span>
+      <span class="chip e">8 · account_move</span>
+    </div>
+  </div>
+</section>
+
+<div class="rule"><span class="o">❦</span></div>
+
+<!-- ════════════ 4 · MODELOS ════════════ -->
+<section id="s4">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <div><span class="kicker">Capa de datos</span><h2>Modelos de datos</h2></div>
+  </div>
+
+  <p class="lead">Diez modelos en ocho archivos Python. Dos son <strong>herencias</strong> de modelos nativos; el resto son nuevos. Odoo crea automáticamente una tabla PostgreSQL por cada modelo nuevo.</p>
+
+  <!-- BOOK -->
+  <div class="card">
+    <h3>📖 LibraryBook <span class="model-tag">library.book</span></h3>
+    <p>Modelo central del catálogo. Reúne información editorial, precios, portada y estado de cada título.</p>
+
+    <h4>Campos</h4>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Campo</th><th>Tipo</th><th>Descripción y validación</th></tr></thead>
+      <tbody>
+        <tr><td><code>name</code></td><td>Char · requerido</td><td>Título del libro.</td></tr>
+        <tr><td><code>isbn</code></td><td>Char · requerido</td><td>ISBN único en toda la BD (constraint SQL <code>unique</code>).</td></tr>
+        <tr><td><code>publication_year</code></td><td>Integer</td><td>Año. Validado por <code>@api.constrains</code>: entre 1450 y el año actual.</td></tr>
+        <tr><td><code>price_sale</code></td><td>Monetary</td><td>Precio de venta. SQL <code>CHECK ≥ 0</code>; Python: no menor que el coste.</td></tr>
+        <tr><td><code>price_cost</code></td><td>Monetary</td><td>Precio de coste. SQL <code>CHECK ≥ 0</code>.</td></tr>
+        <tr><td><code>currency_id</code></td><td>Many2one → res.currency</td><td>Moneda. Por defecto, la de la compañía. Requerido.</td></tr>
+        <tr><td><code>genre</code></td><td>Selection</td><td>8 valores: Ficción, No ficción, Infantil, Cómic, Ciencia, Historia, Biografía, Otro.</td></tr>
+        <tr><td><code>description</code></td><td>Text</td><td>Sinopsis o descripción libre del libro.</td></tr>
+        <tr><td><code>image</code></td><td>Image · 1024×1024</td><td>Portada. Odoo genera miniaturas automáticamente.</td></tr>
+        <tr><td><code>image_small</code></td><td>Image · related, stored</td><td>Miniatura 128×128 derivada de <code>image</code> y persistida.</td></tr>
+        <tr><td><code>state</code></td><td>Selection</td><td><code>for_sale</code> / <code>out_of_stock</code> / <code>discontinued</code>. Por defecto, en venta.</td></tr>
+        <tr><td><code>publisher_id</code></td><td>Many2one → library.publisher</td><td>Editorial del libro.</td></tr>
+        <tr><td><code>author_ids</code></td><td>Many2many ↔ library.author</td><td>Autores. Tabla intermedia <code>library_book_author_rel</code>.</td></tr>
+        <tr><td><code>stock_ids</code></td><td>One2many → library.stock</td><td>Registros de stock por tienda.</td></tr>
+        <tr><td><code>order_line_ids</code></td><td>One2many → library.order.line</td><td>Líneas de venta que incluyen este libro.</td></tr>
+        <tr><td><code>stock_total</code></td><td>Integer · computed, stored</td><td>Suma de cantidades en todas las tiendas.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="g2">
+      <div class="panel">
+        <h4>_check_price_margin()</h4>
+        <p>Regla comercial: si el precio de venta cae por debajo del coste, la empresa vendería con pérdida. Este <code>@api.constrains</code> lanza un <code>ValidationError</code> antes de guardar.</p>
+      </div>
+      <div class="panel">
+        <h4>_compute_stock_total()</h4>
+        <p><code>@api.depends('stock_ids.quantity')</code>. Se recalcula al cambiar cualquier stock hijo. Con <code>store=True</code> se persiste en BD para poder filtrar y listar sin coste de cómputo.</p>
+      </div>
+    </div>
+    <div class="note">
+      <span class="ic">⚡</span>
+      <div>Dos botones de acción rápida, llamables también de forma masiva desde la lista: <code>action_mark_out_of_stock()</code> y <code>action_mark_for_sale()</code>, que solo cambian el campo <code>state</code>.</div>
+    </div>
+  </div>
+
+  <!-- AUTHOR + PUBLISHER -->
+  <div class="g2">
+    <div class="card">
+      <h3>✍️ LibraryAuthor <span class="model-tag">library.author</span></h3>
+      <p>Catálogo de autores. La relación con libros es muchos-a-muchos: un libro puede tener varios autores y viceversa.</p>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Campo</th><th>Tipo</th></tr></thead>
+        <tbody>
+          <tr><td><code>name</code></td><td>Char · requerido</td></tr>
+          <tr><td><code>nationality</code></td><td>Char</td></tr>
+          <tr><td><code>date_of_birth</code></td><td>Date</td></tr>
+          <tr><td><code>biography</code></td><td>Text</td></tr>
+          <tr><td><code>book_ids</code></td><td>Many2many ↔ library.book</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏢 LibraryPublisher <span class="model-tag">library.publisher</span></h3>
+      <p>Catálogo de editoriales. Un libro pertenece a una editorial (Many2one); una editorial publica muchos libros (One2many).</p>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Campo</th><th>Tipo</th></tr></thead>
+        <tbody>
+          <tr><td><code>name</code></td><td>Char · requerido</td></tr>
+          <tr><td><code>country</code></td><td>Char</td></tr>
+          <tr><td><code>website</code></td><td>Char</td></tr>
+          <tr><td><code>phone</code></td><td>Char</td></tr>
+          <tr><td><code>book_ids</code></td><td>One2many → library.book</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+  <div class="note">
+    <span class="ic">🔗</span>
+    <div>La tabla intermedia <code>library_book_author_rel</code> se declara <strong>explícitamente</strong> en ambos modelos (<code>column1='book_id'</code>, <code>column2='author_id'</code>). Declararla evita que Odoo genere dos tablas distintas al resolver la relación desde cada lado.</div>
+  </div>
+
+  <!-- PARTNER -->
+  <div class="card plum">
+    <h3>👤 ResPartner <span class="model-tag">res.partner · herencia</span></h3>
+    <p>En vez de crear un modelo de cliente desde cero, se usa <strong>herencia de clase</strong> (<code>_inherit = 'res.partner'</code>) para añadir campos al contacto nativo. Ventaja clave: los clientes de la librería siguen siendo contactos Odoo, compatibles con facturación, email, etc.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Campo nuevo</th><th>Tipo</th><th>Motivo</th></tr></thead>
+      <tbody>
+        <tr><td><code>is_library_customer</code></td><td>Boolean</td><td>Distingue clientes GestiLibros del resto. Controla la visibilidad de la pestaña y el stat button.</td></tr>
+        <tr><td><code>library_customer_code</code></td><td>Char · unique</td><td>Código interno. Obligatorio si <code>is_library_customer</code> (validado por <code>@api.constrains</code>); el SQL garantiza unicidad.</td></tr>
+        <tr><td><code>favorite_genre</code></td><td>Selection</td><td>Género favorito. 5 opciones: Novela, Historia, Ciencia, Fantasía, Otro.</td></tr>
+        <tr><td><code>loyalty_points</code></td><td>Integer</td><td>Puntos de fidelidad. SQL <code>CHECK ≥ 0</code>.</td></tr>
+        <tr><td><code>sale_count</code></td><td>Integer · computed</td><td>Nº de ventas en estado <em>confirmado</em> o <em>hecho</em>. No se almacena, para estar siempre al día.</td></tr>
+        <tr><td><code>library_order_ids</code></td><td>One2many → library.order</td><td>Historial completo de pedidos del cliente.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="panel" style="margin-top:18px">
+      <h4>action_view_library_orders()</h4>
+      <p>Llamada por el stat button del cliente. Devuelve una acción de ventana que abre la lista de ventas filtrada por <code>client_id = self.id</code>, con <code>default_client_id</code> en el contexto para prerrellenar nuevos pedidos.</p>
+    </div>
+  </div>
+
+  <!-- STORE + STOCK -->
+  <div class="card">
+    <h3>🏪 LibraryStore + LibraryStock <span class="model-tag">library.store</span> <span class="model-tag">library.stock</span></h3>
+    <p>Dos modelos en el mismo archivo por su estrecha relación: <code>library.stock</code> es la tabla de unión que registra cuántas unidades de cada libro hay en cada tienda.</p>
+
+    <div class="g2">
+      <div>
+        <h4>library.store · Tienda</h4>
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Campo</th><th>Tipo</th></tr></thead>
+          <tbody>
+            <tr><td><code>name</code></td><td>Char · requerido</td></tr>
+            <tr><td><code>address</code></td><td>Char</td></tr>
+            <tr><td><code>responsible_id</code></td><td>Many2one → res.partner</td></tr>
+            <tr><td><code>stock_ids</code></td><td>One2many → library.stock</td></tr>
+            <tr><td><code>order_ids</code></td><td>One2many → library.order</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+      <div>
+        <h4>library.stock · Inventario</h4>
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Campo</th><th>Tipo</th></tr></thead>
+          <tbody>
+            <tr><td><code>book_id</code></td><td>Many2one → library.book · req.</td></tr>
+            <tr><td><code>store_id</code></td><td>Many2one → library.store · req.</td></tr>
+            <tr><td><code>quantity</code></td><td>Integer · def. 0</td></tr>
+            <tr><td><code>quantity_minimum</code></td><td>Integer · def. 0</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <h4>Restricciones SQL de library.stock</h4>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Nombre</th><th>SQL</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td><code>…book_store_uniq</code></td><td><code>unique(book_id, store_id)</code></td><td>Un solo registro de stock por par libro-tienda.</td></tr>
+        <tr><td><code>…quantity_nonneg</code></td><td><code>CHECK(quantity ≥ 0)</code></td><td>No tiene sentido un stock negativo.</td></tr>
+        <tr><td><code>…quantity_minimum_nonneg</code></td><td><code>CHECK(quantity_minimum ≥ 0)</code></td><td>El umbral de reposición tampoco puede ser negativo.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- ORDER -->
+  <div class="card amber">
+    <h3>🛒 LibraryOrder <span class="model-tag">library.order</span></h3>
+    <p>Núcleo del proceso de venta. Gestiona el ciclo de vida del pedido, la validación y descuento de stock, y la generación de factura. Está ordenado por fecha descendente (<code>_order = 'date desc, id desc'</code>).</p>
+
+    <h4>Ciclo de estados</h4>
+    <div class="flow">
+      <div class="step"><div class="t">Borrador</div><div class="s">draft</div></div>
+      <span class="arrow">→</span>
+      <div class="step a"><div class="t">Confirmado</div><div class="s">confirmed</div></div>
+      <span class="arrow">→</span>
+      <div class="step e"><div class="t">Hecho</div><div class="s">done</div></div>
+      <span class="arrow">⤵</span>
+      <div class="step r"><div class="t">Cancelado</div><div class="s">cancel</div></div>
+    </div>
+
+    <h4>Campos clave</h4>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Campo</th><th>Tipo</th><th>Detalle</th></tr></thead>
+      <tbody>
+        <tr><td><code>name</code></td><td>Char · readonly</td><td>Referencia tipo <code>ORD/2026/0001</code>. Es <em>"New"</em> hasta confirmar. <code>copy=False</code>.</td></tr>
+        <tr><td><code>store_id</code></td><td>Many2one → library.store · req.</td><td>Tienda de la venta. Determina qué stock se consulta.</td></tr>
+        <tr><td><code>client_id</code></td><td>Many2one → res.partner · req.</td><td>Cliente del pedido.</td></tr>
+        <tr><td><code>date</code></td><td>Datetime · def. ahora</td><td>Fecha del pedido. Usada por las vistas calendario y pivot.</td></tr>
+        <tr><td><code>client_is_library_customer</code></td><td>Boolean · related, stored</td><td>Copia del booleano del cliente, para filtrar sin JOIN.</td></tr>
+        <tr><td><code>client_library_customer_code</code></td><td>Char · related, stored</td><td>Copia del código de cliente.</td></tr>
+        <tr><td><code>amount_total</code></td><td>Monetary · computed, stored</td><td>Suma de subtotales. <code>@api.depends('line_ids.price_subtotal')</code>.</td></tr>
+        <tr><td><code>invoice_id</code></td><td>Many2one → account.move</td><td>Factura generada al confirmar. <code>copy=False</code>.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h4>Métodos de acción</h4>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Método</th><th>Transición</th><th>Lógica</th></tr></thead>
+      <tbody>
+        <tr><td><code>action_confirm()</code></td><td>draft → confirmed</td><td>Valida líneas → comprueba stock → descuenta → asigna secuencia → crea factura.</td></tr>
+        <tr><td><code>action_done()</code></td><td>confirmed → done</td><td>Marca como completado. Si viene directo de draft, ejecuta antes las comprobaciones y la secuencia.</td></tr>
+        <tr><td><code>action_cancel()</code></td><td>cualquiera → cancel</td><td>Cambio de estado. El stock ya descontado no se revierte (decisión de diseño).</td></tr>
+        <tr><td><code>action_reset_draft()</code></td><td>cancel → draft</td><td>Devuelve a borrador para editar.</td></tr>
+        <tr><td><code>action_view_invoice()</code></td><td>—</td><td>Abre el formulario de la factura vinculada.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h4>_create_invoice() · integración con contabilidad</h4>
+    <p>El método más rico del módulo. Al confirmar, crea un <code>account.move</code> de tipo <code>out_invoice</code> (factura de cliente) con:</p>
+    <ul class="list">
+      <li>El cliente del pedido como <code>partner_id</code> de la factura.</li>
+      <li>Cada línea mapeada a <code>invoice_line_ids</code> con nombre del libro (<code>display_name</code>), cantidad y precio unitario.</li>
+      <li>El campo <code>library_order_id</code> apuntando de vuelta al pedido (vía herencia de <code>account.move</code>).</li>
+      <li>La referencia del pedido como <code>ref</code> de la factura, para trazabilidad.</li>
+    </ul>
+    <div class="note">
+      <span class="ic">💡</span>
+      <div>La verificación y el descuento de stock se apoyan en un ayudante, <code>_get_qty_by_book()</code>, que <strong>agrega cantidades por libro</strong>. Así, dos líneas del mismo libro se suman antes de comprobar el inventario de la tienda.</div>
+    </div>
+  </div>
+
+  <!-- ORDER LINE + ACCOUNT MOVE -->
+  <div class="g2">
+    <div class="card">
+      <h3>📋 OrderLine <span class="model-tag">library.order.line</span></h3>
+      <p>Patrón cabecera-líneas, estándar en documentos comerciales de Odoo.</p>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Campo</th><th>Detalle</th></tr></thead>
+        <tbody>
+          <tr><td><code>order_id</code></td><td>M2O → order · <code>ondelete='cascade'</code></td></tr>
+          <tr><td><code>book_id</code></td><td>M2O → book · req. (onchange autocompleta precio)</td></tr>
+          <tr><td><code>quantity</code></td><td>Integer · def. 1 · SQL <code>CHECK &gt; 0</code></td></tr>
+          <tr><td><code>unit_price</code></td><td>Monetary · editable</td></tr>
+          <tr><td><code>price_subtotal</code></td><td>Monetary · computed, stored</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p style="margin-top:12px"><code>@api.onchange('book_id')</code> fija <code>unit_price = book.price_sale</code>; <code>_compute_price_subtotal()</code> calcula <code>quantity × unit_price</code>.</p>
+    </div>
+    <div class="card teal">
+      <h3>🧾 AccountMove <span class="model-tag">account.move · herencia</span></h3>
+      <p>Cierra la navegación bidireccional: del pedido se va a la factura y de la factura, de vuelta al pedido.</p>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Campo / Método</th><th>Propósito</th></tr></thead>
+        <tbody>
+          <tr><td><code>library_order_id</code></td><td>M2O → order. Enlace inverso. <code>readonly</code>, <code>copy=False</code>.</td></tr>
+          <tr><td><code>action_view_library_order()</code></td><td>Abre el formulario del pedido desde la factura.</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"><span class="o">❦</span></div>
+
+<!-- ════════════ 5 · VISTAS ════════════ -->
+<section id="s5">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <div><span class="kicker">Capa de presentación</span><h2>Vistas XML</h2></div>
+  </div>
+
+  <p class="lead">Ocho archivos XML definen toda la interfaz. Dos de ellos usan <strong>herencia de vista</strong> (<code>inherit_id</code>) para inyectar elementos en formularios nativos de Odoo.</p>
+
+  <div class="card">
+    <h3>library_book_views.xml · el más completo</h3>
+    <p>Cuatro vistas para el catálogo: <strong>kanban</strong> (por defecto), <strong>lista</strong>, <strong>formulario</strong> y <strong>búsqueda</strong>.</p>
+    <h4>Kanban</h4>
+    <p>Tarjetas agrupadas por género. Cada una muestra portada (o icono <code>fa-book</code> si falta), título, autores como etiquetas, precio en azul y un badge de estado coloreado (verde = en venta, rojo = sin stock, gris = descatalogado). La vista por defecto de la acción es <code>kanban,list,form</code>.</p>
+    <h4>Lista</h4>
+    <p>Columnas: título, ISBN, género, editorial, año, precio, stock total y estado. Decoración condicional: fila roja para sin stock (<code>decoration-danger</code>), atenuada para descatalogados (<code>decoration-muted</code>).</p>
+    <h4>Formulario</h4>
+    <p>Cabecera con botones de estado y barra de estado visual. Portada como avatar, dos grupos (datos / precios), bloque de descripción y un notebook con dos pestañas:</p>
+    <ul class="list">
+      <li><strong>Stock por tienda:</strong> lista editable inline de registros <code>library.stock</code>.</li>
+      <li><strong>Historial de ventas:</strong> lista de solo lectura de las líneas de pedido del libro.</li>
+    </ul>
+    <h4>Búsqueda</h4>
+    <p>Campos buscables (título, ISBN, autores, editorial), filtros por estado, filtro especial "Stock total = 0" y agrupaciones por editorial, género, estado y año.</p>
+  </div>
+
+  <div class="card amber">
+    <h3>library_order_views.xml · el más rico</h3>
+    <p>Cinco vistas: lista, formulario, búsqueda, calendario y pivot.</p>
+    <h4>Formulario · lógica de UI</h4>
+    <p>Los botones de cabecera aparecen y desaparecen según el estado, vía la directiva <code>invisible</code>:</p>
+    <div class="chips">
+      <span class="chip e">Confirmar · solo en draft</span>
+      <span class="chip e">Marcar hecho · solo en confirmed</span>
+      <span class="chip r">Cancelar · en draft o confirmed</span>
+      <span class="chip n">Volver a borrador · solo en cancel</span>
+      <span class="chip a">Ver factura · solo si existe invoice_id</span>
+    </div>
+    <p style="margin-top:12px">Las líneas se vuelven de solo lectura fuera de <em>draft</em>. El campo <code>book_id</code> de cada línea filtra solo libros con stock en la tienda elegida:</p>
+<pre><code><span class="pun">[(</span><span class="str">'stock_ids.store_id'</span><span class="pun">,</span> <span class="str">'='</span><span class="pun">,</span> parent.store_id<span class="pun">),</span> <span class="pun">(</span><span class="str">'stock_ids.quantity'</span><span class="pun">,</span> <span class="str">'&gt;'</span><span class="pun">,</span> <span class="num">0</span><span class="pun">)]</span></code></pre>
+    <h4>Calendario</h4>
+    <p>Ventas en calendario mensual sobre el campo <code>date</code>; el color de cada evento corresponde a la tienda (<code>color="store_id"</code>).</p>
+    <h4>Pivot</h4>
+    <p>Filas por tienda y mes, columnas por estado, medida de importe total. Permite ver qué tienda vende más y en qué período.</p>
+  </div>
+
+  <div class="g2">
+    <div class="card plum">
+      <h3>library_partner_views.xml</h3>
+      <p><strong>Herencia</strong> de <code>base.view_partner_form</code>. Inserta:</p>
+      <ul class="list">
+        <li><strong>Stat button</strong> (icono carrito) con el nº de ventas; visible solo si <code>is_library_customer</code>.</li>
+        <li><strong>Pestaña GestiLibros</strong> con código, género favorito, puntos e historial de compras; invisible para contactos no marcados.</li>
+      </ul>
+    </div>
+    <div class="card teal">
+      <h3>library_account_move_views.xml</h3>
+      <p><strong>Herencia</strong> de <code>account.view_move_form</code>. Añade un stat button (icono <code>fa-book</code>, etiqueta "Pedido") que aparece solo cuando la factura tiene <code>library_order_id</code>, para saltar al pedido de origen.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>library_menu.xml · navegación</h3>
+    <p>Jerarquía de menús en dos secciones que <strong>responden directamente a la seguridad</strong>: el catálogo es para usuarios, la gestión para gestores.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Menú</th><th>Grupo requerido</th><th>Acción destino</th></tr></thead>
+      <tbody>
+        <tr><td>Catálogo → Libros</td><td><code>group_library_user</code></td><td><code>action_library_book</code></td></tr>
+        <tr><td>Catálogo → Autores</td><td><code>group_library_user</code></td><td><code>action_library_author</code></td></tr>
+        <tr><td>Catálogo → Editoriales</td><td><code>group_library_user</code></td><td><code>action_library_publisher</code></td></tr>
+        <tr><td>Gestión → Tiendas</td><td><code>group_library_manager</code></td><td><code>action_library_store</code></td></tr>
+        <tr><td>Gestión → Ventas</td><td><code>group_library_manager</code></td><td><code>action_library_order</code></td></tr>
+        <tr><td>Gestión → Clientes</td><td><code>group_library_manager</code></td><td><code>base.action_partner_form</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="note">
+      <span class="ic">📇</span>
+      <div>"Clientes" reutiliza la acción nativa <code>base.action_partner_form</code>, así que muestra <strong>todos</strong> los contactos de Odoo. Los específicos de la librería se distinguen por el campo <code>is_library_customer</code> y su pestaña GestiLibros.</div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"><span class="o">❦</span></div>
+
+<!-- ════════════ 6 · SEGURIDAD ════════════ -->
+<section id="s6">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <div><span class="kicker">Control de acceso</span><h2>Seguridad y permisos</h2></div>
+  </div>
+
+  <p class="lead">Odoo aplica seguridad en dos capas independientes y acumulativas: ambas deben superarse para acceder a un dato.</p>
+
+  <div class="g2">
+    <div class="card rust">
+      <h3>Nivel 1 · Permisos de objeto</h3>
+      <p>Controlan si un grupo puede ejecutar operaciones CRUD sobre <em>todos</em> los registros de un modelo. Se declaran en <code>ir.model.access.csv</code> con valores <code>1</code> (permite) / <code>0</code> (deniega).</p>
+    </div>
+    <div class="card rust">
+      <h3>Nivel 2 · Reglas de registro</h3>
+      <p>Filtran <em>qué filas concretas</em> ve cada grupo, aunque el nivel 1 dé acceso al modelo. Se declaran en <code>security.xml</code> como dominios Python, que actúan como cláusulas <code>WHERE</code> añadidas.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Grupos definidos en security.xml</h3>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Grupo</th><th>Nombre</th><th>Hereda de</th><th>Asignación automática</th></tr></thead>
+      <tbody>
+        <tr><td><code>group_library_user</code></td><td>Usuario Tienda de Libros</td><td>—</td><td>Vía <code>base.group_user</code>: todo usuario Odoo entra aquí.</td></tr>
+        <tr><td><code>group_library_manager</code></td><td>Gestor Tienda de Libros</td><td>group_library_user (<code>implied_ids</code>)</td><td>Vía <code>base.group_system</code>: los administradores son gestores.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="g2">
+      <div class="warn"><span class="ic">⚙️</span><div><strong>¿Por qué asignación automática?</strong> Sin ella habría que añadir el grupo a mano a cada usuario tras instalar. Con <code>implied_ids</code> sobre <code>base.group_user</code> y <code>base.group_system</code>, la asignación es inmediata para usuarios actuales y futuros.</div></div>
+      <div class="note"><span class="ic">🧬</span><div><strong>Herencia de grupos.</strong> Como el gestor implica al usuario, hereda todos sus permisos. No hace falta duplicar entradas en el CSV.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>ir.model.access.csv · permisos CRUD</h3>
+    <p>El <strong>usuario</strong> tiene solo lectura sobre los 7 modelos; el <strong>gestor</strong>, CRUD completo.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th rowspan="2">Modelo</th><th colspan="4" style="text-align:center">Usuario</th><th colspan="4" style="text-align:center">Gestor</th></tr>
+        <tr><th>R</th><th>W</th><th>C</th><th>D</th><th>R</th><th>W</th><th>C</th><th>D</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>library.book</code></td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td><code>library.author</code></td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td><code>library.publisher</code></td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td><code>library.store</code></td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td><code>library.stock</code></td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td><code>library.order</code></td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td><code>library.order.line</code></td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="font-size:.8rem;color:var(--text-soft)">R = Read · W = Write · C = Create · D = Delete (unlink)</p>
+  </div>
+
+  <div class="card">
+    <h3>Reglas de registro (ir.rule) para library.order</h3>
+    <p>Solo el pedido —el modelo más sensible— tiene reglas de fila. Hay dos:</p>
+    <div class="g2">
+      <div class="panel">
+        <h4>rule_library_order_user</h4>
+        <p><strong>Dominio:</strong> <code>[('state','in',['confirmed','done','cancel'])]</code></p>
+        <p>Los usuarios solo ven pedidos confirmados, hechos o cancelados — nunca los borradores de otros. Solo lectura.</p>
+      </div>
+      <div class="panel">
+        <h4>rule_library_order_manager</h4>
+        <p><strong>Dominio:</strong> <code>[(1,'=',1)]</code> (siempre verdadero)</p>
+        <p>Los gestores ven todos los pedidos. CRUD completo.</p>
+      </div>
+    </div>
+    <div class="note">
+      <span class="ic">🔀</span>
+      <div><strong>El OR entre reglas resuelve el caso del gestor.</strong> Cuando un usuario pertenece a varios grupos con regla para el mismo modelo, Odoo las combina con <strong>OR</strong>. El gestor hereda <code>group_library_user</code>, así que tiene dos reglas: la restrictiva (solo confirmados) y la permisiva (todos). El resultado, <em>confirmados</em> OR <em>todos</em> = <em>todos</em>, es el comportamiento esperado por diseño.</div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"><span class="o">❦</span></div>
+
+<!-- ════════════ 7 · DATOS ════════════ -->
+<section id="s7">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <div><span class="kicker">Datos iniciales</span><h2>Datos y secuencias</h2></div>
+  </div>
+
+  <div class="card">
+    <h3>library_sequence.xml · numeración de pedidos</h3>
+    <p>Una <code>ir.sequence</code> genera las referencias de los pedidos.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Parámetro</th><th>Valor</th><th>Significado</th></tr></thead>
+      <tbody>
+        <tr><td>code</td><td><code>library.order</code></td><td>Lo invoca el código: <code>next_by_code('library.order')</code>.</td></tr>
+        <tr><td>prefix</td><td><code>ORD/%(year)s/</code></td><td>Prefijo con año dinámico → <code>ORD/2026/</code>.</td></tr>
+        <tr><td>padding</td><td>4</td><td>Rellena con ceros: <code>0001</code>.</td></tr>
+        <tr><td>number_next / increment</td><td>1 / 1</td><td>Empieza en 1, incrementa de uno en uno.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="note">
+      <span class="ic">🔢</span>
+      <div>La secuencia se asigna <strong>solo al confirmar</strong>, no al crear el borrador (que se llama <em>"New"</em>). Así no se consumen números en pedidos que se cancelen sin confirmar, igual que hace <code>sale.order</code> en Odoo estándar. El contador reinicia cada año por el <code>%(year)s</code>.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>library_data.xml · datos demo</h3>
+    <p>Carga datos realistas al instalar para poder probar el módulo de inmediato. <strong>81 registros</strong> en total.</p>
+
+    <div class="g3" style="margin:18px 0">
+      <div class="stat"><div class="big">12</div><div class="lbl">Editoriales</div></div>
+      <div class="stat"><div class="big">12</div><div class="lbl">Autores</div></div>
+      <div class="stat"><div class="big">12</div><div class="lbl">Libros</div></div>
+      <div class="stat"><div class="big">3</div><div class="lbl">Tiendas</div></div>
+      <div class="stat"><div class="big">36</div><div class="lbl">Stock (12×3)</div></div>
+      <div class="stat"><div class="big">6</div><div class="lbl">Clientes</div></div>
+    </div>
+
+    <div class="g2">
+      <div>
+        <h4>Estados de los 12 libros</h4>
+        <div class="chips">
+          <span class="chip e">9 en venta</span>
+          <span class="chip r">2 sin stock</span>
+          <span class="chip n">1 descatalogado</span>
+        </div>
+        <p style="font-size:.85rem;margin-top:8px">Sin stock: <em>La ciudad y los perros</em> y <em>Veinte poemas de amor…</em>. Descatalogado: <em>Don Quijote de la Mancha</em>.</p>
+      </div>
+      <div>
+        <h4>Tiendas</h4>
+        <ul class="list">
+          <li>Librería Central — Madrid (Gran Vía 28)</li>
+          <li>Librería del Norte — Barcelona (Paseo de Gracia 10)</li>
+          <li>Librería del Sur — Sevilla (Av. de la Constitución 5)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>Clientes de demostración</h4>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Código</th><th>Nombre</th><th>Género favorito</th><th>Puntos</th></tr></thead>
+      <tbody>
+        <tr><td><code>GLI-001</code></td><td>Ana García Fernández</td><td>Fantasía</td><td>320</td></tr>
+        <tr><td><code>GLI-002</code></td><td>Carlos López Martínez</td><td>Novela</td><td>185</td></tr>
+        <tr><td><code>GLI-003</code></td><td>María Rodríguez Sanz</td><td>Historia</td><td>540</td></tr>
+        <tr><td><code>GLI-004</code></td><td>Pablo Martínez Ruiz</td><td>Ciencia</td><td>95</td></tr>
+        <tr><td><code>GLI-005</code></td><td>Laura Fernández Gil</td><td>Novela</td><td>410</td></tr>
+        <tr><td><code>GLI-006</code></td><td>Diego Sánchez Torres</td><td>Otro</td><td>230</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="note">
+      <span class="ic">📚</span>
+      <div>Los libros demo son clásicos reales con ISBN, año y precios coherentes (García Márquez, Borges, Vargas Llosa, Kafka, Dostoyevski, Cervantes…). El stock varía por tienda, de 5 a 30 unidades. No se cargan pedidos demo: el historial se construye al crear ventas.</div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"><span class="o">❦</span></div>
+
+<!-- ════════════ 8 · FLUJOS ════════════ -->
+<section id="s8">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <div><span class="kicker">Lógica operativa</span><h2>Flujos de negocio</h2></div>
+  </div>
+
+  <div class="card amber">
+    <h3>Flujo completo de una venta</h3>
+
+    <h4>Paso 1 · Borrador</h4>
+    <p>El gestor crea un pedido (<code>state='draft'</code>, <code>name='New'</code>) y elige tienda y cliente. Al fijar la tienda, el dominio de <code>book_id</code> en las líneas se restringe a libros con stock en esa tienda.</p>
+
+    <h4>Paso 2 · Líneas</h4>
+    <p>Al elegir un libro, el <code>@onchange</code> rellena <code>unit_price</code> con su precio de venta. Subtotales y <code>amount_total</code> se recalculan en tiempo real.</p>
+
+    <h4>Paso 3 · Confirmación</h4>
+    <p>Al pulsar "Confirmar", <code>action_confirm()</code> ejecuta en secuencia:</p>
+    <div class="vflow">
+      <div class="vstep"><span class="pill">Valida líneas ≥ 1</span><span class="d">Lanza <code>ValidationError</code> si el pedido no tiene líneas.</span></div>
+      <div class="vstep"><span class="pill">Verifica stock</span><span class="d">Agrega cantidad por libro y la compara con <code>library.stock</code> de la tienda; falla si no alcanza.</span></div>
+      <div class="vstep"><span class="pill a">Descuenta stock</span><span class="d"><code>stock_line.quantity -= cantidad_pedida</code> por cada libro.</span></div>
+      <div class="vstep"><span class="pill a">Asigna secuencia</span><span class="d"><code>ORD/2026/XXXX</code> desde <code>ir.sequence</code> (solo si el nombre era "New").</span></div>
+      <div class="vstep"><span class="pill e">Crea factura</span><span class="d"><code>account.move</code> tipo <code>out_invoice</code> con las líneas mapeadas.</span></div>
+      <div class="vstep"><span class="pill e">state = confirmed</span><span class="d">El botón "Ver factura" se hace visible.</span></div>
+    </div>
+
+    <h4>Paso 4 · Factura</h4>
+    <p>La factura, de tipo <code>out_invoice</code>, incluye todas las líneas y guarda <code>library_order_id</code>. Desde ella se vuelve al pedido con el stat button "Pedido".</p>
+  </div>
+
+  <div class="card">
+    <h3>Stock multi-tienda</h3>
+    <p>El inventario no es global, sino por tienda. <code>library.stock</code> une libros y tiendas con su cantidad.</p>
+    <ul class="list">
+      <li><code>unique(book_id, store_id)</code> impide duplicados.</li>
+      <li><code>stock_total</code> del libro suma todas las cantidades (<code>@api.depends</code>).</li>
+      <li>Al confirmar, solo se descuenta el stock de la tienda del pedido.</li>
+      <li><code>quantity_minimum</code> es informativo, para alertas de reposición.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Validaciones · resumen</h3>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Modelo</th><th>Tipo</th><th>Regla</th></tr></thead>
+      <tbody>
+        <tr><td>library.book</td><td>SQL</td><td>ISBN único; precio venta ≥ 0; precio coste ≥ 0</td></tr>
+        <tr><td>library.book</td><td>@constrains</td><td>Año entre 1450 y el actual; precio venta ≥ coste</td></tr>
+        <tr><td>library.stock</td><td>SQL</td><td>Par libro-tienda único; cantidades ≥ 0</td></tr>
+        <tr><td>library.order</td><td>ValidationError</td><td>No confirmar sin líneas ni sin tienda; exige stock suficiente</td></tr>
+        <tr><td>library.order.line</td><td>SQL</td><td>Cantidad &gt; 0</td></tr>
+        <tr><td>res.partner</td><td>SQL</td><td>Código de cliente único; puntos ≥ 0</td></tr>
+        <tr><td>res.partner</td><td>@constrains</td><td>Código obligatorio si is_library_customer</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<div class="rule"><span class="o">❦</span></div>
+
+<!-- ════════════ 9 · RELACIONES ════════════ -->
+<section id="s9">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <div><span class="kicker">Modelo entidad-relación</span><h2>Diagrama de relaciones</h2></div>
+  </div>
+
+  <p class="lead">Las relaciones son las de cualquier base de datos relacional, declaradas en Python como campos Odoo.</p>
+  <div class="chips" style="margin-bottom:18px">
+    <span class="chip" style="background:rgba(23,143,143,.12);color:var(--teal);border-color:rgba(23,143,143,.3)">Many2one = clave foránea (columna)</span>
+    <span class="chip e">One2many = inversa virtual (sin columna)</span>
+    <span class="chip p">Many2many = tabla intermedia</span>
+  </div>
+
+  <div class="card">
+<pre style="font-size:.78rem"><code>  ┌──────────────────┐        ┌──────────────────┐
+  │  library.author  │◄──M2M──►│  library.book    │◄──M2O──┐
+  └──────────────────┘        └────────┬─────────┘        │
+   (library_book_author_rel)           │ O2M               │
+                                       ▼                   │
+                              ┌──────────────────┐  ┌──────────────────┐
+                              │  library.stock   │  │ library.publisher│
+                              │  (book × store)  │  └──────────────────┘
+                              └────────┬─────────┘   (book.publisher_id)
+                                       │ M2O
+                                       ▼
+                              ┌──────────────────┐
+                              │  library.store   │
+                              └────────┬─────────┘
+                                       │ O2M
+                              ┌──────────────────┐       ┌──────────────┐
+                              │  library.order   │◄──M2O──│  res.partner │
+                              └────────┬─────────┘        │   (cliente)  │
+                                       │ O2M              └──────────────┘
+                                       ▼
+                              ┌──────────────────┐
+                              │ library.order    │───M2O──►  library.book
+                              │      .line        │
+                              └──────────────────┘
+
+  library.order  ──M2O──►  account.move
+  account.move   ──M2O──►  library.order   (inverso: library_order_id)</code></pre>
+
+    <h4>Relaciones detalladas</h4>
+    <div class="rel"><span class="rel-tag m2m">M2M</span><div><strong>book ↔ author</strong> — un libro puede tener varios autores y un autor varios libros. Tabla <code>library_book_author_rel</code>.</div></div>
+    <div class="rel"><span class="rel-tag m2o">M2O</span><div><strong>book → publisher</strong> — un libro pertenece a una editorial.</div></div>
+    <div class="rel"><span class="rel-tag m2o">M2O</span><div><strong>stock → book</strong> y <strong>stock → store</strong> — cada registro de stock cruza un libro con una tienda.</div></div>
+    <div class="rel"><span class="rel-tag m2o">M2O</span><div><strong>order → store</strong> — el pedido se origina en una tienda.</div></div>
+    <div class="rel"><span class="rel-tag m2o">M2O</span><div><strong>order → res.partner</strong> — el pedido tiene un cliente.</div></div>
+    <div class="rel"><span class="rel-tag m2o">M2O</span><div><strong>order → account.move</strong> — el pedido genera una factura.</div></div>
+    <div class="rel"><span class="rel-tag m2o">M2O</span><div><strong>order.line → order</strong> (cascade) y <strong>order.line → book</strong> — cada línea pertenece a un pedido y vende un libro.</div></div>
+    <div class="rel"><span class="rel-tag m2o">M2O</span><div><strong>account.move → order</strong> — enlace inverso para navegar de la factura al pedido.</div></div>
+  </div>
+</section>
+
+<div class="rule"><span class="o">❦</span></div>
+
+<!-- ════════════ 10 · DOCKER ════════════ -->
+<section id="s10">
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <div><span class="kicker">Entorno reproducible</span><h2>Infraestructura Docker</h2></div>
+  </div>
+
+  <p class="lead">Docker Compose levanta el entorno completo con un comando: dos servicios, Odoo y PostgreSQL, conectados entre sí.</p>
+
+  <div class="g2">
+    <div class="card">
+      <h3>Servicio <code>web</code> · Odoo 18</h3>
+      <ul class="list">
+        <li>Imagen: <code>odoo:18</code></li>
+        <li><code>depends_on: db</code> — la BD arranca primero</li>
+        <li>Puerto: <code>8069:8069</code> → <code>http://localhost:8069</code></li>
+        <li>Addons: <code>./volumesOdoo/addons</code> → <code>/mnt/extra-addons</code></li>
+        <li>Datos: <code>./volumesOdoo/dataOdoo</code> → <code>/var/lib/odoo</code></li>
+        <li>Usuario: <code>root</code> (escritura en volúmenes)</li>
+        <li>Entorno: <code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code></li>
+      </ul>
+    </div>
+    <div class="card teal">
+      <h3>Servicio <code>db</code> · PostgreSQL 15</h3>
+      <ul class="list">
+        <li>Imagen: <code>postgres:15</code></li>
+        <li>Usuario: <code>odoo</code> · Contraseña: <code>odoo</code></li>
+        <li>Base de datos: <code>postgres</code></li>
+        <li>Datos: <code>./volumesOdoo/dataPostgreSQL</code> → <code>/var/lib/postgresql/data</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Arranque y persistencia</h3>
+<pre><code>docker compose up -d        <span class="cm"># levanta en segundo plano</span>
+<span class="cm"># Acceder en http://localhost:8069 y crear la base de datos</span>
+<span class="cm"># Al instalar GestiLibros se cargan los 81 registros demo</span></code></pre>
+    <p>El código del módulo se monta <strong>en vivo</strong>: los cambios en Python y XML se reflejan sin reconstruir la imagen (basta reiniciar Odoo o actualizar el módulo). Los volúmenes <code>dataOdoo</code> y <code>dataPostgreSQL</code> están en <code>.gitignore</code> y sobreviven a <code>docker compose down</code>; los datos solo se pierden si se borran esas carpetas a mano.</p>
+    <div class="note">
+      <span class="ic">🐳</span>
+      <div><strong>¿Por qué Docker?</strong> Garantiza un entorno idéntico en cualquier máquina. Instalar Odoo 18 con todas sus dependencias Python a mano es laborioso y propenso a errores de versión; con un comando, el entorno está listo en segundos.</div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"><span class="o">❦</span></div>
+
+<!-- ════════════ 11 · VERSIONES ════════════ -->
+<section id="s11">
+  <div class="sec-head">
+    <span class="sec-num">11</span>
+    <div><span class="kicker">Entorno verificado</span><h2>Versiones y compatibilidad</h2></div>
+  </div>
+
+  <p class="lead">El módulo se desarrolló y probó con este entorno, fijado de forma explícita en <code>docker-compose.yml</code>.</p>
+
+  <div class="card teal">
+    <h3>Versiones exactas</h3>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Componente</th><th>Versión</th><th>Cómo se fija</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Odoo</strong></td><td><code>18</code></td><td>Imagen <code>odoo:18</code> en el servicio <code>web</code></td></tr>
+        <tr><td><strong>PostgreSQL</strong></td><td><code>15</code></td><td>Imagen <code>postgres:15</code> en el servicio <code>db</code></td></tr>
+        <tr><td><strong>Python</strong></td><td><code>3.12</code></td><td>Incluido en la imagen oficial <code>odoo:18</code></td></tr>
+        <tr><td><strong>Docker Compose</strong></td><td>v2 (plugin)</td><td>Comando <code>docker compose</code> (sin guion)</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="chips" style="margin-top:14px">
+      <span class="chip e">Odoo 18</span>
+      <span class="chip e">PostgreSQL 15</span>
+      <span class="chip e">Python 3.12</span>
+      <span class="chip a">Docker Compose v2</span>
+    </div>
+    <div class="warn">
+      <span class="ic">📝</span>
+      <div>El <code>README.md</code> del módulo menciona "Odoo 17" como requisito, pero el <code>docker-compose.yml</code> del repositorio fija <code>odoo:18</code>. La <strong>versión de referencia es la 18</strong>, que es la que arranca el contenedor.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <h3>Con Odoo 18 (recomendado)</h3>
+      <p>Usar el <code>docker-compose.yml</code> del repositorio sin tocar.</p>
+<pre style="font-size:.78rem"><code>docker compose up -d
+<span class="cm"># http://localhost:8069 → instalar "GestiLibros"</span></code></pre>
+    </div>
+    <div class="card amber">
+      <h3>Probar con Odoo 19</h3>
+      <p>Cambiar una sola línea en <code>docker-compose.yml</code>:</p>
+<pre style="font-size:.78rem"><code>image: odoo:18  →  image: odoo:19</code></pre>
+      <p style="margin-top:8px">Pueden surgir avisos de compatibilidad en vistas XML o pequeños cambios de API propios de la nueva versión.</p>
+    </div>
+  </div>
+
+  <div class="card teal">
+    <h3>Instalación paso a paso</h3>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Acción</th><th>Detalle</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Clonar el repositorio</td><td><code>git clone &lt;url&gt;</code> y entrar en la carpeta</td></tr>
+        <tr><td>2</td><td>Arrancar contenedores</td><td><code>docker compose up -d</code> en la raíz</td></tr>
+        <tr><td>3</td><td>Crear base de datos</td><td>Abrir <code>http://localhost:8069</code> y rellenar el formulario</td></tr>
+        <tr><td>4</td><td>Modo desarrollador</td><td>Ajustes → Activar el modo desarrollador</td></tr>
+        <tr><td>5</td><td>Actualizar apps</td><td>Aplicaciones → Actualizar la lista de aplicaciones</td></tr>
+        <tr><td>6</td><td>Instalar GestiLibros</td><td>Buscar "GestiLibros" e instalar. Se cargan 81 registros demo.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+</div><!-- /.wrap -->
+
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="ttl">GestiLibros<span class="dot">.</span></div>
+      <p style="color:rgba(246,244,236,.55);margin-top:6px;font-style:italic;font-family:'Fraunces',serif">Módulo Odoo · catálogo, stock y ventas</p>
+    </div>
+    <div class="meta">
+      <div>Versión 1.0.0 · Autor: Mauro</div>
+      <div>Repositorio: <a href="https://github.com/Mauro-vs/GestiLibro">github.com/Mauro-vs/GestiLibro</a></div>
+      <div style="opacity:.6">Documentación técnica · 2026</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
