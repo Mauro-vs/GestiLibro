@@ -18,6 +18,9 @@ class LibraryOrderLine(models.Model):
     unit_price = fields.Monetary(string='Precio unitario', currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', related='order_id.currency_id', store=True, readonly=True)
     price_subtotal = fields.Monetary(string='Subtotal', compute='_compute_price_subtotal', store=True)
+    # Estado de la venta a la que pertenece la línea: permite usar los mismos
+    # códigos de color en el historial de ventas por libro.
+    order_state = fields.Selection(related='order_id.state', string='Estado', store=True)
 
     @api.onchange('book_id')
     def _onchange_book_id(self):

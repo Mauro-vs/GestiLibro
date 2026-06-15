@@ -20,35 +20,46 @@ class ResPartner(models.Model):
     ]
 
     is_library_customer = fields.Boolean(string='Cliente GestiLibros', default=False)
-    library_customer_code = fields.Char(string='Codigo cliente')
-    favorite_genre = fields.Selection(
-        [
-            ('novel', 'Novela'),
-            ('history', 'Historia'),
-            ('science', 'Ciencia'),
-            ('fantasy', 'Fantasía'),
-            ('other', 'Otro'),
-        ],
-        string='Género favorito',
-    )
+    library_customer_code = fields.Char(string='Código cliente', copy=False, readonly=True)
+    # Género favorito apuntando al mismo modelo que los libros (library.genre):
+    # así el cliente dispone exactamente de los mismos géneros que el catálogo.
+    favorite_genre_id = fields.Many2one('library.genre', string='Género favorito')
     loyalty_points = fields.Integer(string='Puntos de fidelidad', default=0)
-    sale_count = fields.Integer(string='Ventas', compute='_compute_sale_count')
-    library_order_ids = fields.One2many('library.order', 'client_id', string='Ventas')
+    # Desde la ficha del cliente son sus "compras" (las ventas de la tienda).
+    purchase_count = fields.Integer(string='Compras', compute='_compute_purchase_count')
+    library_order_ids = fields.One2many('library.order', 'client_id', string='Compras')
 
     @api.depends('library_order_ids', 'library_order_ids.state')
-    def _compute_sale_count(self):
+    def _compute_purchase_count(self):
         for partner in self:
-            partner.sale_count = len(
+            partner.purchase_count = len(
                 partner.library_order_ids.filtered(lambda o: o.state in ('confirmed', 'done'))
             )
 
+    def _next_customer_code(self):
+        return self.env['ir.sequence'].next_by_code('library.customer') or False
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('is_library_customer') and not vals.get('library_customer_code'):
+                vals['library_customer_code'] = self._next_customer_code()
+        return super().create(vals_list)
+
+    def write(self, vals):
+        res = super().write(vals)
+        # Al marcar un contacto como cliente, se le asigna código automáticamente.
+        if vals.get('is_library_customer'):
+            for partner in self.filtered(lambda p: p.is_library_customer and not p.library_customer_code):
+                partner.library_customer_code = partner._next_customer_code()
+        return res
+
     def action_view_library_orders(self):
-        # Abre la lista de ventas filtrada por este cliente.
-        # Usado por el stat_button de la ficha de cliente.
+        # Abre la lista de compras del cliente (usado por el stat button).
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Ventas',
+            'name': 'Compras',
             'res_model': 'library.order',
             'view_mode': 'list,form',
             'domain': [('client_id', '=', self.id)],
@@ -59,4 +70,4 @@ class ResPartner(models.Model):
     def _check_library_customer_code(self):
         for partner in self:
             if partner.is_library_customer and not partner.library_customer_code:
-                raise ValidationError('El codigo de cliente es obligatorio para clientes GestiLibros.')
+                raise ValidationError('El código de cliente es obligatorio para clientes GestiLibros.')

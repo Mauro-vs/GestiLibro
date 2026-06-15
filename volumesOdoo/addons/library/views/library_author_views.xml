@@ -5,9 +5,40 @@
     <field name="arch" type="xml">
       <list>
         <field name="name"/>
-        <field name="nationality"/>
+        <field name="country_id"/>
         <field name="date_of_birth"/>
       </list>
+    </field>
+  </record>
+
+  <record id="view_library_author_kanban" model="ir.ui.view">
+    <field name="name">library.author.kanban</field>
+    <field name="model">library.author</field>
+    <field name="arch" type="xml">
+      <kanban>
+        <field name="name"/>
+        <field name="country_id"/>
+        <field name="image"/>
+        <templates>
+          <t t-name="card">
+            <div class="d-flex p-2 align-items-center">
+              <div class="me-3 d-flex align-items-center justify-content-center" style="width:64px; height:64px; flex:0 0 64px; border-radius:50%; overflow:hidden; background:#e9ecef;">
+                <t t-if="record.image.raw_value">
+                  <field name="image" widget="image" class="w-100 h-100"
+                         options="{'img_class': 'object-fit-cover w-100 h-100'}" alt="Foto"/>
+                </t>
+                <t t-else="">
+                  <i class="fa fa-user fa-2x" style="color:#ced4da;"/>
+                </t>
+              </div>
+              <div>
+                <strong class="d-block"><field name="name"/></strong>
+                <span class="text-muted"><field name="country_id"/></span>
+              </div>
+            </div>
+          </t>
+        </templates>
+      </kanban>
     </field>
   </record>
 
@@ -17,19 +48,30 @@
     <field name="arch" type="xml">
       <form>
         <sheet>
+          <field name="image" widget="image" class="oe_avatar" readonly="0"/>
           <div class="oe_title">
             <h1><field name="name" placeholder="Nombre del autor"/></h1>
           </div>
           <group>
-            <field name="nationality"/>
+            <field name="country_id"/>
             <field name="date_of_birth"/>
           </group>
           <group string="Biografía breve">
             <field name="biography" nolabel="1" placeholder="Breve descripción del autor..."/>
           </group>
-          <group string="Libros del autor">
-            <field name="book_ids" widget="many2many_tags" nolabel="1"/>
-          </group>
+          <notebook>
+            <page string="Libros del autor">
+              <field name="book_ids" options="{'no_create': True}">
+                <list>
+                  <field name="name"/>
+                  <field name="isbn"/>
+                  <field name="genre_id"/>
+                  <field name="price_sale"/>
+                  <field name="state"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
         </sheet>
       </form>
     </field>
@@ -42,9 +84,9 @@
     <field name="arch" type="xml">
       <search>
         <field name="name"/>
-        <field name="nationality"/>
+        <field name="country_id"/>
         <group expand="0" string="Agrupar por">
-          <filter name="group_by_nationality" string="Nacionalidad" context="{'group_by': 'nationality'}"/>
+          <filter name="group_by_country" string="Nacionalidad" context="{'group_by': 'country_id'}"/>
         </group>
       </search>
     </field>
@@ -53,7 +95,7 @@
   <record id="action_library_author" model="ir.actions.act_window">
     <field name="name">Autores</field>
     <field name="res_model">library.author</field>
-    <field name="view_mode">list,form</field>
+    <field name="view_mode">kanban,list,form</field>
     <field name="search_view_id" ref="view_library_author_search"/>
   </record>
 </odoo>

@@ -1,30 +1,55 @@
 <odoo>
-  <!-- Grupos mínimos para asignar permisos desde ir.model.access.csv -->
+  <!-- ============================================================
+       Categoría de módulo: hace que los grupos aparezcan como un
+       SELECTOR DE ROL en Ajustes → Usuarios (en vez de estar ocultos).
+  ============================================================ -->
+  <record id="module_category_gestilibros" model="ir.module.category">
+    <field name="name">GestiLibros</field>
+    <field name="description">Roles de la gestión de tiendas de libros</field>
+    <field name="sequence">20</field>
+  </record>
+
+  <!-- ============================================================
+       Tres roles encadenados (cada uno hereda al anterior):
+       Consulta  ⊂  Vendedor  ⊂  Gestor
+  ============================================================ -->
   <record id="group_library_user" model="res.groups">
-    <field name="name">Usuario Tienda de Libros</field>
-    <field name="category_id" ref="base.module_category_hidden"/>
+    <field name="name">Consulta</field>
+    <field name="category_id" ref="module_category_gestilibros"/>
+    <field name="comment">Solo lectura del catálogo, tiendas, stock y ventas.</field>
+  </record>
+
+  <record id="group_library_seller" model="res.groups">
+    <field name="name">Vendedor</field>
+    <field name="category_id" ref="module_category_gestilibros"/>
+    <field name="implied_ids" eval="[(4, ref('group_library_user'))]"/>
+    <field name="comment">Gestiona el stock y las ventas de SU tienda. Puede vender sin ser administrador.</field>
   </record>
 
   <record id="group_library_manager" model="res.groups">
-    <field name="name">Gestor Tienda de Libros</field>
-    <field name="category_id" ref="base.module_category_hidden"/>
-    <field name="implied_ids" eval="[(4, ref('group_library_user'))]"/>
+    <field name="name">Gestor</field>
+    <field name="category_id" ref="module_category_gestilibros"/>
+    <field name="implied_ids" eval="[(4, ref('group_library_seller'))]"/>
+    <field name="comment">Acceso completo: catálogo, géneros, todas las tiendas, ventas y clientes.</field>
   </record>
 
-  <!-- Asignación automática para que el menú sea visible sin configurar usuarios a mano -->
+  <!-- Todo empleado interno puede al menos CONSULTAR el catálogo. -->
   <record id="base.group_user" model="res.groups">
     <field name="implied_ids" eval="[(4, ref('group_library_user'))]"/>
   </record>
 
-  <record id="base.group_system" model="res.groups">
-    <field name="implied_ids" eval="[(4, ref('group_library_manager'))]"/>
+  <!-- El administrador del sistema arranca como Gestor (para no perder acceso),
+       pero ser Gestor NO implica ser administrador de Odoo (#11). -->
+  <record id="base.user_admin" model="res.users">
+    <field name="groups_id" eval="[(4, ref('group_library_manager'))]"/>
   </record>
 
-  <!-- Reglas de registro (ir.rule) para library.order -->
-  <!-- Los usuarios básicos solo ven pedidos ya confirmados, hechos o cancelados,
-       no los borradores de otros usuarios -->
+  <!-- ============================================================
+       Reglas de registro para library.order
+  ============================================================ -->
+  <!-- Consulta: solo ve pedidos confirmados/hechos/cancelados (no borradores ajenos). -->
   <record id="rule_library_order_user" model="ir.rule">
-    <field name="name">Pedidos: usuarios ven confirmados/hechos/cancelados</field>
+    <field name="name">Ventas: consulta ve confirmadas/hechas/canceladas</field>
     <field name="model_id" ref="model_library_order"/>
     <field name="domain_force">[('state', 'in', ['confirmed', 'done', 'cancel'])]</field>
     <field name="groups" eval="[(4, ref('group_library_user'))]"/>
@@ -34,11 +59,33 @@
     <field name="perm_unlink" eval="False"/>
   </record>
 
-  <!-- Los gestores ven todos los pedidos sin restricción (dominio siempre verdadero).
-       Como los gestores también heredan group_library_user, sus dos reglas se combinan
-       con OR: (estado restringido) OR (todos) = todos. -->
+  <!-- Vendedor (LECTURA): ve TODAS las ventas de todas las tiendas (consultar el resto). -->
+  <record id="rule_library_order_seller_read" model="ir.rule">
+    <field name="name">Ventas: el vendedor consulta todas</field>
+    <field name="model_id" ref="model_library_order"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+    <field name="groups" eval="[(4, ref('group_library_seller'))]"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+
+  <!-- Vendedor (ESCRITURA): solo crea/edita ventas de SU tienda. -->
+  <record id="rule_library_order_seller_write" model="ir.rule">
+    <field name="name">Ventas: el vendedor solo gestiona su tienda</field>
+    <field name="model_id" ref="model_library_order"/>
+    <field name="domain_force">[('store_id.responsible_id', '=', user.id)]</field>
+    <field name="groups" eval="[(4, ref('group_library_seller'))]"/>
+    <field name="perm_read" eval="False"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+
+  <!-- Gestor: control total sobre todas las ventas. -->
   <record id="rule_library_order_manager" model="ir.rule">
-    <field name="name">Pedidos: gestores ven todos</field>
+    <field name="name">Ventas: el gestor ve y edita todas</field>
     <field name="model_id" ref="model_library_order"/>
     <field name="domain_force">[(1, '=', 1)]</field>
     <field name="groups" eval="[(4, ref('group_library_manager'))]"/>
@@ -46,5 +93,47 @@
     <field name="perm_write" eval="True"/>
     <field name="perm_create" eval="True"/>
     <field name="perm_unlink" eval="True"/>
+  </record>
+
+  <!-- ============================================================
+       Reglas para library.order.line (líneas: misma restricción que la venta)
+  ============================================================ -->
+  <record id="rule_library_order_line_seller_write" model="ir.rule">
+    <field name="name">Líneas: el vendedor solo edita las de su tienda</field>
+    <field name="model_id" ref="model_library_order_line"/>
+    <field name="domain_force">[('order_id.store_id.responsible_id', '=', user.id)]</field>
+    <field name="groups" eval="[(4, ref('group_library_seller'))]"/>
+    <field name="perm_read" eval="False"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+
+  <!-- ============================================================
+       Reglas para library.stock (el vendedor solo ajusta el stock de su tienda)
+  ============================================================ -->
+  <record id="rule_library_stock_seller_write" model="ir.rule">
+    <field name="name">Stock: el vendedor solo ajusta el de su tienda</field>
+    <field name="model_id" ref="model_library_stock"/>
+    <field name="domain_force">[('store_id.responsible_id', '=', user.id)]</field>
+    <field name="groups" eval="[(4, ref('group_library_seller'))]"/>
+    <field name="perm_read" eval="False"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+
+  <!-- ============================================================
+       Reglas para library.store (el vendedor solo edita su tienda)
+  ============================================================ -->
+  <record id="rule_library_store_seller_write" model="ir.rule">
+    <field name="name">Tienda: el vendedor solo edita la suya</field>
+    <field name="model_id" ref="model_library_store"/>
+    <field name="domain_force">[('responsible_id', '=', user.id)]</field>
+    <field name="groups" eval="[(4, ref('group_library_seller'))]"/>
+    <field name="perm_read" eval="False"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
   </record>
 </odoo>

@@ -1,18 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-  <menuitem id="menu_library_root" name="GestiLibros" groups="library.group_library_user"/>
+  <menuitem id="menu_library_root" name="GestiLibros"
+            web_icon="library,static/description/icon.png"
+            groups="library.group_library_user"/>
 
-  <!-- Catálogo agrupado -->
-  <menuitem id="menu_library_catalog" name="Catálogo" parent="menu_library_root" sequence="10" groups="library.group_library_user"/>
-  <menuitem id="menu_library_books" name="Libros" parent="menu_library_catalog" action="action_library_book" sequence="10" groups="library.group_library_user"/>
-  <menuitem id="menu_library_authors" name="Autores" parent="menu_library_catalog" action="action_library_author" sequence="20" groups="library.group_library_user"/>
-  <menuitem id="menu_library_publishers" name="Editoriales" parent="menu_library_catalog" action="action_library_publisher" sequence="30" groups="library.group_library_user"/>
+  <!-- Catálogo: visible para cualquier rol (incluido Consulta) -->
+  <menuitem id="menu_library_catalog" name="Catálogo" parent="menu_library_root" sequence="10"
+            groups="library.group_library_user"/>
+  <menuitem id="menu_library_books" name="Libros" parent="menu_library_catalog" action="action_library_book" sequence="10"
+            groups="library.group_library_user"/>
+  <menuitem id="menu_library_authors" name="Autores" parent="menu_library_catalog" action="action_library_author" sequence="20"
+            groups="library.group_library_user"/>
+  <menuitem id="menu_library_publishers" name="Editoriales" parent="menu_library_catalog" action="action_library_publisher" sequence="30"
+            groups="library.group_library_user"/>
 
-  <!-- Gestión / Operaciones -->
-  <menuitem id="menu_library_management" name="Gestión" parent="menu_library_root" sequence="20" groups="library.group_library_manager"/>
-  <menuitem id="menu_library_stores" name="Tiendas" parent="menu_library_management" action="action_library_store" sequence="10" groups="library.group_library_manager"/>
-  <menuitem id="menu_library_orders" name="Ventas" parent="menu_library_management" action="action_library_order" sequence="20" groups="library.group_library_manager"/>
-  <menuitem id="menu_library_partners" name="Clientes" parent="menu_library_management" action="base.action_partner_form" sequence="30" groups="library.group_library_manager"/>
+  <!-- Ventas: a partir del rol Vendedor -->
+  <menuitem id="menu_library_sales" name="Ventas" parent="menu_library_root" sequence="20"
+            groups="library.group_library_seller"/>
+  <menuitem id="menu_library_orders" name="Ventas" parent="menu_library_sales" action="action_library_order" sequence="10"
+            groups="library.group_library_seller"/>
+  <menuitem id="menu_library_partners" name="Clientes" parent="menu_library_sales" action="base.action_partner_form" sequence="20"
+            groups="library.group_library_seller"/>
+
+  <!-- Inventario: a partir del rol Vendedor -->
+  <menuitem id="menu_library_inventory" name="Inventario" parent="menu_library_root" sequence="30"
+            groups="library.group_library_seller"/>
+  <menuitem id="menu_library_stores" name="Tiendas" parent="menu_library_inventory" action="action_library_store" sequence="10"
+            groups="library.group_library_seller"/>
+  <menuitem id="menu_library_stock_below_min" name="Stock bajo mínimo" parent="menu_library_inventory" action="action_library_stock_below_min" sequence="20"
+            groups="library.group_library_seller"/>
+
+  <!-- Configuración: solo Gestor -->
+  <menuitem id="menu_library_config" name="Configuración" parent="menu_library_root" sequence="90"
+            groups="library.group_library_manager"/>
+  <menuitem id="menu_library_genres" name="Géneros" parent="menu_library_config" action="action_library_genre" sequence="10"
+            groups="library.group_library_manager"/>
 
 </odoo>

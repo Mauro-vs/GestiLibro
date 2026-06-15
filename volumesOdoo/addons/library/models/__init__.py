@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from . import genre
 from . import book
 from . import author
 from . import partner

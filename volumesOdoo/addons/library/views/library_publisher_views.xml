@@ -5,7 +5,9 @@
     <field name="arch" type="xml">
       <list>
         <field name="name"/>
-        <field name="country"/>
+        <field name="country_id"/>
+        <field name="website" widget="url"/>
+        <field name="phone"/>
       </list>
     </field>
   </record>
@@ -16,15 +18,27 @@
     <field name="arch" type="xml">
       <form>
         <sheet>
+          <div class="oe_title">
+            <h1><field name="name" placeholder="Nombre de la editorial"/></h1>
+          </div>
           <group>
-            <field name="name"/>
-            <field name="country"/>
-            <field name="website"/>
+            <field name="country_id"/>
+            <field name="website" widget="url"/>
             <field name="phone"/>
           </group>
-          <group>
-            <field name="book_ids"/>
-          </group>
+          <notebook>
+            <page string="Libros de la editorial">
+              <field name="book_ids" options="{'no_create': True}">
+                <list>
+                  <field name="name"/>
+                  <field name="isbn"/>
+                  <field name="genre_id"/>
+                  <field name="price_sale"/>
+                  <field name="state"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
         </sheet>
       </form>
     </field>
@@ -37,9 +51,9 @@
     <field name="arch" type="xml">
       <search>
         <field name="name"/>
-        <field name="country"/>
+        <field name="country_id"/>
         <group expand="0" string="Agrupar por">
-          <filter name="group_by_country" string="Pais" context="{'group_by': 'country'}"/>
+          <filter name="group_by_country" string="País" context="{'group_by': 'country_id'}"/>
         </group>
       </search>
     </field>

@@ -4,28 +4,37 @@
     <field name="model">res.partner</field>
     <field name="inherit_id" ref="base.view_partner_form"/>
     <field name="arch" type="xml">
-      <!-- Stat button: muestra el número de ventas y abre la lista al hacer clic -->
+      <!-- Stat button: nº de compras del cliente; abre la lista al hacer clic -->
       <xpath expr="//div[@name='button_box']" position="inside">
         <button class="oe_stat_button" type="object"
                 name="action_view_library_orders"
                 icon="fa-shopping-cart"
                 invisible="not is_library_customer">
-          <field name="sale_count" widget="statinfo" string="Ventas"/>
+          <field name="purchase_count" widget="statinfo" string="Compras"/>
         </button>
       </xpath>
+
+      <!-- Casilla SIEMPRE visible para poder marcar el contacto como cliente
+           (antes estaba dentro de la pestaña oculta y no se podía activar). -->
+      <xpath expr="//field[@name='category_id']" position="after">
+        <field name="is_library_customer"/>
+      </xpath>
+
       <xpath expr="//sheet/notebook" position="inside">
         <page string="GestiLibros" invisible="not is_library_customer">
           <group>
             <group string="Datos de cliente">
-              <field name="is_library_customer"/>
-              <field name="library_customer_code"/>
-              <field name="favorite_genre"/>
+              <field name="library_customer_code" placeholder="Se genera automáticamente"/>
+              <field name="favorite_genre_id" options="{'no_create_edit': True}"/>
               <field name="loyalty_points"/>
             </group>
           </group>
           <group string="Historial de compras">
             <field name="library_order_ids" nolabel="1" readonly="1">
-              <list>
+              <list decoration-info="state == 'draft'"
+                    decoration-warning="state == 'confirmed'"
+                    decoration-success="state == 'done'"
+                    decoration-muted="state == 'cancel'">
                 <field name="name"/>
                 <field name="date"/>
                 <field name="store_id"/>

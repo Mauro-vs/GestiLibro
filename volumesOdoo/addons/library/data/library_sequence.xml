@@ -9,4 +9,14 @@
         <field name="number_next">1</field>
         <field name="number_increment">1</field>
     </record>
+
+    <!-- Secuencia para el código de cliente: GLI-0001, GLI-0002, ... -->
+    <record id="sequence_library_customer" model="ir.sequence">
+        <field name="name">Secuencia Código Cliente</field>
+        <field name="code">library.customer</field>
+        <field name="prefix">GLI-</field>
+        <field name="padding">4</field>
+        <field name="number_next">100</field>
+        <field name="number_increment">1</field>
+    </record>
 </odoo>

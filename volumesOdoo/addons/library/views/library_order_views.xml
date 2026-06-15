@@ -3,7 +3,7 @@
     <field name="name">library.order.list</field>
     <field name="model">library.order</field>
     <field name="arch" type="xml">
-      <list decoration-info="state == 'draft'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'">
+      <list decoration-info="state == 'draft'" decoration-warning="state == 'confirmed'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'">
         <field name="name"/>
         <field name="store_id"/>
         <field name="client_id"/>
@@ -55,7 +55,9 @@
             <page string="Líneas de venta">
               <field name="line_ids" readonly="state != 'draft'">
                 <list editable="bottom">
-                  <field name="book_id" domain="[('stock_ids.store_id', '=', parent.store_id), ('stock_ids.quantity', '>', 0)]"/>
+                  <field name="book_id"
+                         domain="[('stock_ids.store_id', '=', parent.store_id), ('stock_ids.quantity', '>', 0)]"
+                         options="{'no_create_edit': True, 'no_create': True}"/>
                   <field name="quantity"/>
                   <field name="unit_price"/>
                   <field name="price_subtotal" readonly="1"/>

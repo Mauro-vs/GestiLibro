@@ -18,13 +18,13 @@
 
 GestiLibros cubre el ciclo completo de una librería con varias sucursales:
 
-- **Catálogo**: libros con portada, ISBN, géneros, precios y estado de disponibilidad
-- **Autores y editoriales**: relaciones muchos-a-muchos y uno-a-muchos con el catálogo
-- **Stock multi-tienda**: control de inventario independiente por cada sucursal
+- **Catálogo**: libros con portada, ISBN, género (modelo configurable), precios y estado de disponibilidad automático
+- **Autores y editoriales**: autores con foto y vista Kanban; país basado en `res.country`; control de duplicados
+- **Stock multi-tienda**: inventario independiente por sucursal con aviso de stock bajo mínimo
 - **Ventas**: proceso completo con validación de stock y numeración automática (`ORD/2026/0001`)
-- **Facturación automática**: al confirmar una venta se genera un `account.move` de forma transparente
-- **Clientes fidelizados**: extensión de `res.partner` con código único, género favorito y puntos
-- **Seguridad por roles**: usuarios (lectura) y gestores (CRUD completo) con reglas de registro
+- **Facturación automática**: al cerrar la venta se genera y **se confirma** un `account.move` de forma transparente
+- **Clientes fidelizados**: extensión de `res.partner` con código automático, género favorito y puntos
+- **Seguridad por roles**: tres roles asignables (Consulta, Vendedor y Gestor) con aislamiento por tienda
 
 ---
 
@@ -119,7 +119,8 @@ GestiLibros/
 
 | Modelo | Tabla BD | Descripción |
 |--------|----------|-------------|
-| `library.book` | `library_book` | Catálogo de libros con precios, imagen y estado |
+| `library.genre` | `library_genre` | Géneros literarios configurables (compartidos con clientes) |
+| `library.book` | `library_book` | Catálogo de libros con precios, imagen y estado calculado |
 | `library.author` | `library_author` | Autores (M2M con libros) |
 | `library.publisher` | `library_publisher` | Editoriales (O2M con libros) |
 | `library.store` | `library_store` | Tiendas físicas |
@@ -135,11 +136,11 @@ GestiLibros/
 
 ```
 Borrador → [Confirmar] → Confirmado → [Marcar hecho] → Hecho
-                ↓
-         • Valida stock en tienda
-         • Descuenta stock
+                ↓                                          ↓
+         • Valida stock en tienda                   • Confirma (contabiliza)
+         • Descuenta stock                            la factura automáticamente
          • Genera ORD/2026/XXXX
-         • Crea factura account.move
+         • Crea factura account.move (borrador)
               ↓
          [Ver factura] disponible
 ```
@@ -150,10 +151,13 @@ Borrador → [Confirmar] → Confirmado → [Marcar hecho] → Hecho
 
 | Rol | Acceso | Asignación |
 |-----|--------|------------|
-| **Usuario** (`group_library_user`) | Lectura del catálogo y pedidos confirmados/hechos/cancelados | Automática para todos los usuarios Odoo |
-| **Gestor** (`group_library_manager`) | CRUD completo + ve todos los pedidos incluidos borradores | Automática para administradores del sistema |
+| **Consulta** (`group_library_user`) | Solo lectura del catálogo, tiendas, stock y ventas | Automática para todo empleado interno |
+| **Vendedor** (`group_library_seller`) | Vende y gestiona el stock de **su** tienda; consulta el resto. Hereda Consulta | Manual, desde Ajustes → Usuarios |
+| **Gestor** (`group_library_manager`) | CRUD completo del catálogo, géneros, todas las tiendas, ventas y clientes. Hereda Vendedor | Manual; el administrador lo recibe por defecto |
 
-Las **reglas de registro** sobre `library.order` aplican un filtro adicional: los usuarios básicos no pueden ver borradores de otros usuarios. Los gestores (que heredan ambos grupos) obtienen acceso total por el comportamiento OR de las reglas en Odoo.
+Los tres roles aparecen como un **selector de rol** en Ajustes → Usuarios (categoría *GestiLibros*). Ser **Gestor no implica ser administrador de Odoo**: un responsable de tienda puede vender sin tener permisos de sistema.
+
+Las **reglas de registro** (`ir.rule`) aplican el aislamiento por tienda: un Vendedor solo puede crear/editar las ventas y el stock de la tienda de la que es responsable, pero puede **consultar** las del resto. El Gestor obtiene acceso total por el comportamiento OR de las reglas en Odoo.
 
 ---
 
@@ -161,11 +165,12 @@ Las **reglas de registro** sobre `library.order` aplican un filtro adicional: lo
 
 Al instalar el módulo se cargan:
 
+- **12 géneros** literarios configurables
 - **12 editoriales** (Planeta, Anagrama, Penguin, HarperCollins…)
-- **12 autores** (García Márquez, Borges, Kafka, Tolstói, Cervantes…)
-- **12 libros** clásicos con ISBN, precios y estados variados
-- **3 tiendas** en Madrid, Barcelona y Sevilla
-- **36 registros de stock** (12 libros × 3 tiendas)
+- **12 autores** con foto (García Márquez, Borges, Kafka, Tolstói, Cervantes…)
+- **12 libros** clásicos con portada, ISBN, precios y estados variados
+- **3 tiendas** en Madrid, Barcelona y Sevilla, cada una con su usuario responsable (`central`, `norte`, `sur`)
+- **36 registros de stock** (12 libros × 3 tiendas), con ejemplos por debajo del mínimo
 - **6 clientes** con códigos GLI-001…GLI-006 y puntos de fidelidad
 
 ---
@@ -173,7 +178,7 @@ Al instalar el módulo se cargan:
 ## Características técnicas destacadas
 
 - **Herencia de modelos**: `res.partner` y `account.move` extendidos sin romper compatibilidad con otros módulos Odoo
-- **Campos calculados**: `stock_total` (suma por tiendas), `sale_count` (pedidos confirmados), `price_subtotal` y `amount_total`
+- **Campos calculados**: `stock_total` (suma por tiendas), `state` del libro (a partir del stock), `below_minimum` (stock bajo mínimo), `purchase_count` (compras del cliente), `price_subtotal` y `amount_total`
 - **Validaciones dobles**: restricciones SQL (`_sql_constraints`) para integridad en BD + validaciones Python (`@api.constrains`) para lógica de negocio
 - **Vistas avanzadas**: Kanban con portadas, Calendar por fecha coloreado por tienda, Pivot analítico de ventas
 - **Dominio dinámico**: el selector de libro en líneas de venta filtra solo libros con stock en la tienda seleccionada
@@ -195,4 +200,4 @@ El `docker-compose.yml` incluido en el repositorio fija estas versiones exactas.
 
 ## Autor
 
-**Mauro** — Módulo desarrollado para el curso de desarrollo de módulos Odoo.
+**Mauro Valdés Sanjuan** — Módulo desarrollado para el curso de desarrollo de módulos Odoo.

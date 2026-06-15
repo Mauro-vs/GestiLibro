@@ -54,7 +54,7 @@ class LibraryOrder(models.Model):
             order._consume_stock()
             # Asignar número de secuencia al confirmar (igual que hace sale.order)
             if order.name == 'New':
-                order.name = self.env['ir.sequence'].next_by_code('library.order') or 'New'
+                order.name = self.env['ir.sequence'].sudo().next_by_code('library.order') or 'New'
             # Crear factura automáticamente en el módulo de Contabilidad
             invoice = order._create_invoice()
             order.invoice_id = invoice.id
@@ -68,7 +68,14 @@ class LibraryOrder(models.Model):
                 order._check_stock_available()
                 order._consume_stock()
                 if order.name == 'New':
-                    order.name = self.env['ir.sequence'].next_by_code('library.order') or 'New'
+                    order.name = self.env['ir.sequence'].sudo().next_by_code('library.order') or 'New'
+            # Garantiza la factura y la CONFIRMA (contabiliza) automáticamente al
+            # cerrar la venta: el usuario no tiene que confirmarla a mano.
+            # sudo() para que un Vendedor pueda cerrar la venta sin permisos de Contabilidad.
+            if not order.invoice_id:
+                order.invoice_id = order._create_invoice().id
+            if order.invoice_id.sudo().state == 'draft':
+                order.invoice_id.sudo().action_post()
             order.state = 'done'
 
     def action_cancel(self):
@@ -104,7 +111,9 @@ class LibraryOrder(models.Model):
                 # account_id es opcional: si la empresa tiene cuenta de ingresos
                 # por defecto, Odoo la asigna automáticamente.
             }))
-        invoice = self.env['account.move'].create({
+        # sudo(): el Vendedor no tiene permisos de Contabilidad, pero la venta
+        # debe poder generar su factura igualmente.
+        invoice = self.env['account.move'].sudo().create({
             'move_type': 'out_invoice',
             'partner_id': self.client_id.id,
             'invoice_date': fields.Date.today(),

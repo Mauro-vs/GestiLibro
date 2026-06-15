@@ -7,6 +7,7 @@
         <field name="name"/>
         <field name="address"/>
         <field name="responsible_id"/>
+        <field name="below_minimum_count" string="Referencias bajo mínimo"/>
       </list>
     </field>
   </record>
@@ -17,24 +18,30 @@
     <field name="arch" type="xml">
       <form>
         <sheet>
+          <div class="oe_title">
+            <h1><field name="name" placeholder="Nombre de la tienda"/></h1>
+          </div>
           <group>
-            <field name="name"/>
             <field name="address"/>
             <field name="responsible_id"/>
           </group>
           <notebook>
             <page string="Stock">
               <field name="stock_ids">
-                <list editable="bottom">
-                  <field name="book_id"/>
+                <list editable="bottom" decoration-danger="below_minimum">
+                  <field name="book_id" options="{'no_create_edit': True, 'no_create': True}"/>
                   <field name="quantity"/>
                   <field name="quantity_minimum"/>
+                  <field name="below_minimum" string="Bajo mínimo"/>
                 </list>
               </field>
             </page>
             <page string="Ventas">
               <field name="order_ids" readonly="1">
-                <list>
+                <list decoration-info="state == 'draft'"
+                      decoration-warning="state == 'confirmed'"
+                      decoration-success="state == 'done'"
+                      decoration-muted="state == 'cancel'">
                   <field name="name"/>
                   <field name="date"/>
                   <field name="client_id"/>
@@ -71,4 +78,51 @@
     <field name="search_view_id" ref="view_library_store_search"/>
   </record>
 
+  <!-- ============================================================
+       Vista de stock por debajo del mínimo (#16/#33)
+  ============================================================ -->
+  <record id="view_library_stock_below_min_list" model="ir.ui.view">
+    <field name="name">library.stock.below.min.list</field>
+    <field name="model">library.stock</field>
+    <field name="arch" type="xml">
+      <list decoration-danger="below_minimum">
+        <field name="store_id"/>
+        <field name="book_id"/>
+        <field name="quantity"/>
+        <field name="quantity_minimum"/>
+        <field name="below_minimum" string="Bajo mínimo"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_library_stock_search" model="ir.ui.view">
+    <field name="name">library.stock.search</field>
+    <field name="model">library.stock</field>
+    <field name="type">search</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="store_id"/>
+        <field name="book_id"/>
+        <filter name="filter_below_minimum" string="Bajo mínimo" domain="[('below_minimum', '=', True)]"/>
+        <group expand="0" string="Agrupar por">
+          <filter name="group_by_store" string="Tienda" context="{'group_by': 'store_id'}"/>
+          <filter name="group_by_book" string="Libro" context="{'group_by': 'book_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_library_stock_below_min" model="ir.actions.act_window">
+    <field name="name">Stock bajo mínimo</field>
+    <field name="res_model">library.stock</field>
+    <field name="view_mode">list</field>
+    <field name="view_id" ref="view_library_stock_below_min_list"/>
+    <field name="search_view_id" ref="view_library_stock_search"/>
+    <field name="domain">[('below_minimum', '=', True)]</field>
+    <field name="context">{'search_default_group_by_store': 1}</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">No hay libros por debajo del stock mínimo</p>
+      <p>Aquí aparecerán las referencias de cada tienda que necesiten reposición.</p>
+    </field>
+  </record>
 </odoo>

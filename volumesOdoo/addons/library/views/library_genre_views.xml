@@ -1,0 +1,41 @@
+<odoo>
+  <record id="view_library_genre_list" model="ir.ui.view">
+    <field name="name">library.genre.list</field>
+    <field name="model">library.genre</field>
+    <field name="arch" type="xml">
+      <list editable="bottom">
+        <field name="name"/>
+        <field name="description"/>
+        <field name="book_count"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_library_genre_form" model="ir.ui.view">
+    <field name="name">library.genre.form</field>
+    <field name="model">library.genre</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <div class="oe_title">
+            <h1><field name="name" placeholder="Nombre del género"/></h1>
+          </div>
+          <group>
+            <field name="description"/>
+            <field name="book_count"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_library_genre" model="ir.actions.act_window">
+    <field name="name">Géneros</field>
+    <field name="res_model">library.genre</field>
+    <field name="view_mode">list,form</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">Crea el primer género literario</p>
+      <p>Los géneros se comparten entre el catálogo de libros y los clientes.</p>
+    </field>
+  </record>
+</odoo>

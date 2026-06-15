@@ -38,9 +38,14 @@ Accede a `http://localhost:8069`, crea una base de datos e instala el módulo **
 - Botones de acción rápida: *Marcar como agotado* / *Volver a en venta*.
 - Vista **Kanban** agrupada por género, con portada, autores, precio y badge de estado.
 
+### Géneros
+- Modelo propio `library.genre` gestionable desde **Configuración → Géneros**.
+- Compartido entre el catálogo de libros y el género favorito de los clientes.
+
 ### Autores y editoriales
-- Autores con nombre, nacionalidad, fecha de nacimiento y biografía breve.
-- Editoriales con nombre, país, web y teléfono.
+- Autores con nombre, foto, nacionalidad (`res.country`), fecha de nacimiento y biografía breve. Vista Kanban con foto.
+- Editoriales con nombre, país (`res.country`), web y teléfono.
+- Control de duplicados por nombre en autores y editoriales.
 
 ### Tiendas y stock
 - Gestión de varias tiendas con nombre, dirección y responsable.
@@ -55,17 +60,21 @@ Accede a `http://localhost:8069`, crea una base de datos e instala el módulo **
 - Total del pedido calculado en tiempo real.
 
 ### Facturación automática
-- Al confirmar un pedido se genera automáticamente una factura de cliente en el módulo de **Contabilidad** (`account.move`).
+- Al confirmar un pedido se genera automáticamente una factura de cliente (borrador) en **Contabilidad** (`account.move`).
+- Al **marcar la venta como hecha**, la factura se **confirma (contabiliza) automáticamente**.
 - Botón *Ver factura* para acceder directamente desde el pedido.
 
 ### Clientes (herencia de res.partner)
-- Campos propios: código de cliente, género favorito, puntos de fidelidad.
-- Contador de ventas confirmadas con acceso directo desde la ficha.
-- Historial de pedidos integrado en la pestaña GestiLibros.
+- Casilla *Cliente GestiLibros* siempre visible para poder dar de alta el cliente.
+- Código de cliente **generado automáticamente** (secuencia `GLI-####`), género favorito y puntos de fidelidad.
+- Contador de **compras** confirmadas con acceso directo desde la ficha.
+- Historial de compras integrado en la pestaña GestiLibros.
 
 ### Seguridad
-- **Usuario de librería**: acceso de lectura al catálogo.
-- **Gestor de librería**: acceso completo a tiendas, ventas y clientes. Hereda los permisos de usuario.
+- **Consulta** (`group_library_user`): solo lectura del catálogo, tiendas, stock y ventas.
+- **Vendedor** (`group_library_seller`): vende y gestiona el stock de **su** tienda, consulta el resto. No necesita permisos de administrador. Hereda Consulta.
+- **Gestor** (`group_library_manager`): acceso completo (catálogo, géneros, tiendas, ventas y clientes). Hereda Vendedor.
+- Los roles se asignan desde **Ajustes → Usuarios** (categoría *GestiLibros*) y el aislamiento por tienda se aplica con reglas de registro (`ir.rule`).
 
 ---
 
@@ -75,27 +84,34 @@ Accede a `http://localhost:8069`, crea una base de datos e instala el módulo **
 library/
 ├── __manifest__.py
 ├── models/
+│   ├── genre.py         # library.genre — géneros literarios
 │   ├── book.py          # library.book — catálogo de libros
 │   ├── author.py        # library.author — autores
 │   ├── publisher.py     # library.publisher — editoriales
 │   ├── store.py         # library.store + library.stock
 │   ├── order.py         # library.order — pedidos de venta
 │   ├── order_line.py    # library.order.line — líneas de pedido
-│   └── partner.py       # herencia de res.partner
+│   ├── partner.py       # herencia de res.partner
+│   └── account_move.py  # herencia de account.move
 ├── views/
+│   ├── library_genre_views.xml
 │   ├── library_book_views.xml
 │   ├── library_author_views.xml
 │   ├── library_publisher_views.xml
 │   ├── library_store_views.xml
 │   ├── library_order_views.xml
 │   ├── library_partner_views.xml
+│   ├── library_account_move_views.xml
 │   └── library_menu.xml
 ├── security/
-│   ├── security.xml
+│   ├── security.xml            # 3 roles + reglas de registro por tienda
 │   └── ir.model.access.csv
+├── static/
+│   ├── description/            # icono y descripción del módulo
+│   └── img/                    # portadas de libros y fotos de autor
 └── data/
-    ├── library_sequence.xml   # secuencia ORD/YYYY/XXXX
-    └── library_data.xml       # datos demo (12 libros, 3 tiendas, 6 clientes)
+    ├── library_sequence.xml   # secuencias ORD/YYYY/XXXX y GLI-####
+    └── library_data.xml       # datos demo (géneros, 12 libros, 3 tiendas, 6 clientes)
 ```
 
 ---
