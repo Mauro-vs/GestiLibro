@@ -109,6 +109,18 @@
     <field name="perm_unlink" eval="True"/>
   </record>
 
+  <!-- Gestor: control total sobre las líneas (sin restricción de tienda). -->
+  <record id="rule_library_order_line_manager" model="ir.rule">
+    <field name="name">Líneas: el gestor edita todas</field>
+    <field name="model_id" ref="model_library_order_line"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+    <field name="groups" eval="[(4, ref('group_library_manager'))]"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+
   <!-- ============================================================
        Reglas para library.stock (el vendedor solo ajusta el stock de su tienda)
   ============================================================ -->
@@ -118,6 +130,18 @@
     <field name="domain_force">[('store_id.responsible_id', '=', user.id)]</field>
     <field name="groups" eval="[(4, ref('group_library_seller'))]"/>
     <field name="perm_read" eval="False"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+
+  <!-- Gestor: control total sobre el stock de todas las tiendas. -->
+  <record id="rule_library_stock_manager" model="ir.rule">
+    <field name="name">Stock: el gestor ajusta el de todas las tiendas</field>
+    <field name="model_id" ref="model_library_stock"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+    <field name="groups" eval="[(4, ref('group_library_manager'))]"/>
+    <field name="perm_read" eval="True"/>
     <field name="perm_write" eval="True"/>
     <field name="perm_create" eval="True"/>
     <field name="perm_unlink" eval="True"/>
@@ -135,5 +159,17 @@
     <field name="perm_write" eval="True"/>
     <field name="perm_create" eval="False"/>
     <field name="perm_unlink" eval="False"/>
+  </record>
+
+  <!-- Gestor: control total sobre todas las tiendas. -->
+  <record id="rule_library_store_manager" model="ir.rule">
+    <field name="name">Tienda: el gestor gestiona todas</field>
+    <field name="model_id" ref="model_library_store"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+    <field name="groups" eval="[(4, ref('group_library_manager'))]"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
   </record>
 </odoo>
